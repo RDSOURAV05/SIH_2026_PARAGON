@@ -170,9 +170,21 @@
                             <input type="date" id="travel-date" class="planner-input">
                         </div>
                         
-                        <div class="form-group">
-                            <label for="travel-days">Trip Duration (Days)</label>
-                            <input type="number" id="travel-days" min="1" max="5" value="2" class="planner-input">
+                        <div class="form-group-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label for="travel-days">Duration</label>
+                                <input type="number" id="travel-days" min="1" max="12" value="2" class="planner-input">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label for="travel-days-unit">Unit</label>
+                                <div class="select-wrapper" style="position: relative;">
+                                    <select id="travel-days-unit" class="planner-input" style="height: 38px; padding: 0.4rem 0.7rem;">
+                                        <option value="days">Days</option>
+                                        <option value="hours">Hours</option>
+                                    </select>
+                                    <i class="fa-solid fa-chevron-down select-arrow" style="right: 10px; font-size: 0.7rem; top: 14px;"></i>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="form-group">
@@ -243,6 +255,20 @@
                     <div class="card-content feed-wrapper" id="feed-log-container">
                         <div class="feed-log" id="feed-log">
                             <!-- Appends messages in real-time -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 6: Saved Itinerary Registry -->
+                <div class="card glass registry-card">
+                    <div class="card-header">
+                        <i class="fa-solid fa-list-check card-icon"></i>
+                        <h2>Registered Travel Registry</h2>
+                    </div>
+                    <div class="card-content" style="overflow-y: auto; gap: 8px; max-height: 180px;" id="itinerary-registry-container">
+                        <!-- Saved itineraries listed here -->
+                        <div style="font-size: 0.8rem; color: var(--text-muted); text-align: center; padding: 15px 0;">
+                            No registered travel plans found.
                         </div>
                     </div>
                 </div>

@@ -238,6 +238,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // Setup Itinerary Planner UI
     populatePlannerChecklist();
+    loadSavedItineraries(); // Load registered itineraries
     document.getElementById('generate-itinerary-btn').addEventListener('click', handleGenerateItinerary);
     document.getElementById('save-itinerary-btn').addEventListener('click', handleSaveItinerary);
 
@@ -750,7 +751,8 @@ function populatePlannerChecklist() {
 function handleGenerateItinerary() {
     const name = document.getElementById('traveler-name').value.trim();
     const startDateStr = document.getElementById('travel-date').value;
-    const days = parseInt(document.getElementById('travel-days').value);
+    const duration = parseInt(document.getElementById('travel-days').value);
+    const unit = document.getElementById('travel-days-unit').value; // 'days' or 'hours'
     
     if (!name) {
         alert("Please enter your name to personalize the itinerary.");
@@ -777,21 +779,43 @@ function handleGenerateItinerary() {
 
     const startDate = new Date(startDateStr);
 
-    // Schedule: allocate one destination per day up to "days"
-    for (let dayIdx = 0; dayIdx < days; dayIdx++) {
+    // Schedule: allocate destinations sequentially
+    for (let stepIdx = 0; stepIdx < duration; stepIdx++) {
         // Pick destination in round-robin fashion from selected
-        const baseId = selectedIds[dayIdx % selectedIds.length];
+        const baseId = selectedIds[stepIdx % selectedIds.length];
         const dest = destinationsData[baseId];
         if (!dest) continue;
 
-        const ratio = dest.tourists / dest.capacity;
-        const isCongested = ratio >= 0.8;
+        let isCongested = false;
+        let ratio = dest.tourists / dest.capacity;
+        let timeLabel = '';
 
-        const currentStepDate = new Date(startDate);
-        currentStepDate.setDate(startDate.getDate() + dayIdx);
-        const dateString = currentStepDate.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
+        if (unit === 'hours') {
+            // For hourly planning: get current hour + offset
+            const now = new Date();
+            const currentHour = (now.getHours() + stepIdx) % 24;
+            timeLabel = `${currentHour.toString().padStart(2, '0')}:00`;
 
-        let stepHtml = '';
+            // Calculate estimated load at this specific hour (matching forecast curve)
+            let timeFactor = 1.0;
+            if (currentHour >= 11 && currentHour <= 16) {
+                timeFactor = 1.25;
+            } else if (currentHour >= 20 || currentHour <= 6) {
+                timeFactor = 0.45;
+            } else {
+                timeFactor = 0.85;
+            }
+            const predictedLoad = Math.round(dest.tourists * timeFactor);
+            ratio = predictedLoad / dest.capacity;
+            isCongested = ratio >= 0.8;
+        } else {
+            // Daily planning
+            const currentStepDate = new Date(startDate);
+            currentStepDate.setDate(startDate.getDate() + stepIdx);
+            timeLabel = currentStepDate.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
+            isCongested = ratio >= 0.8;
+        }
+
         let stepClass = 'safe-step';
         let stepName = dest.name;
         let altReason = '';
@@ -808,23 +832,23 @@ function handleGenerateItinerary() {
                 
                 altReason = `
                     <div class="step-redirect-alert">
-                        <strong>Redirection Active:</strong> ${dest.name} has exceeded capacity limits (${Math.round(ratio*100)}% load). 
-                        Rerouted to <strong>${bestAlt.name}</strong> (${bestAlt.distance} away, ${Math.round(bestAlt.ratio*100)}% load).
+                        <strong>Redirection Active:</strong> ${dest.name} exceeds limits at ${timeLabel} (${Math.round(ratio*100)}% load). 
+                        Rerouted to <strong>${bestAlt.name}</strong> (${bestAlt.distance} away).
                         <div class="step-incentive"><i class="fa-solid fa-gift"></i> Incentive: Get 15% off local park tickets!</div>
                     </div>
                 `;
                 
-                logFeed('Itinerary Redirection', `Rerouted Day ${dayIdx+1} from crowded ${dest.name} to ${bestAlt.name}`, 'warn');
+                logFeed('Itinerary Redirection', `Rerouted ${unit === 'hours' ? 'Hour ' + (stepIdx+1) : 'Day ' + (stepIdx+1)} from crowded ${dest.name} to ${bestAlt.name}`, 'warn');
             } else {
-                altReason = `<div class="step-redirect-alert"><strong>Alert:</strong> Destination is crowded, please proceed with caution.</div>`;
+                altReason = `<div class="step-redirect-alert"><strong>Alert:</strong> Destination is crowded at this time, please proceed with caution.</div>`;
             }
         } else {
-            logFeed('Itinerary Scheduled', `Scheduled Day ${dayIdx+1} to ${dest.name} (Optimal)`, 'info');
+            logFeed('Itinerary Scheduled', `Scheduled ${unit === 'hours' ? 'Hour ' + (stepIdx+1) : 'Day ' + (stepIdx+1)} to ${dest.name} (Optimal)`, 'info');
         }
 
         generatedItinerarySteps.push({
-            day: dayIdx + 1,
-            date: dateString,
+            day: stepIdx + 1,
+            date: timeLabel,
             destination_id: finalDestId,
             destination_name: stepName,
             status: isCongested ? "Redirected" : "Safe"
@@ -834,9 +858,9 @@ function handleGenerateItinerary() {
         stepCard.className = `timeline-step ${stepClass}`;
         stepCard.style.cursor = 'pointer';
         stepCard.innerHTML = `
-            <span class="step-day-badge">Day ${dayIdx + 1} - ${dateString}</span>
+            <span class="step-day-badge">${unit === 'hours' ? 'Hour ' + (stepIdx + 1) + ' (' + timeLabel + ')' : 'Day ' + (stepIdx + 1) + ' (' + timeLabel + ')'}</span>
             <span class="step-name">${stepName}</span>
-            <div class="step-details">Estimated visit: 4 hours | Capacity Status: ${isCongested ? "Overcapacity (Rerouted)" : "Safe flow"}</div>
+            <div class="step-details">Capacity Status: ${isCongested ? "Overcapacity (Rerouted)" : "Safe flow"}</div>
             ${altReason}
         `;
 
@@ -857,11 +881,12 @@ function handleGenerateItinerary() {
 function handleSaveItinerary() {
     const name = document.getElementById('traveler-name').value.trim();
     const startDateStr = document.getElementById('travel-date').value;
+    const unit = document.getElementById('travel-days-unit').value;
     
     if (generatedItinerarySteps.length === 0) return;
 
     // Create string list of destinations
-    const listStr = generatedItinerarySteps.map(s => `Day ${s.day}: ${s.destination_name}`).join(" | ");
+    const listStr = generatedItinerarySteps.map(s => `${unit === 'hours' ? 'Hr' : 'Day'} ${s.day}: ${s.destination_name}`).join(" | ");
 
     const payload = {
         traveler_name: name,
@@ -881,6 +906,7 @@ function handleSaveItinerary() {
     .then(data => {
         logFeed('Route Registered', `Itinerary successfully saved to SQLite DB (ID: ${data.id})`, 'info');
         alert(`Success! Your custom crowd-safe itinerary has been saved to the database.\nItinerary ID: ${data.id}`);
+        loadSavedItineraries(); // Refresh list immediately!
     })
     .catch(err => {
         console.error("Save failed:", err);
@@ -888,3 +914,75 @@ function handleSaveItinerary() {
         alert("Failed to save to database. Please make sure the FastAPI server is running.");
     });
 }
+
+// Fetch and display registered itineraries from DB
+function loadSavedItineraries() {
+    const container = document.getElementById('itinerary-registry-container');
+    if (!container) return;
+
+    fetch('/api/itineraries')
+    .then(response => {
+        if (!response.ok) throw new Error('API server offline.');
+        return response.json();
+    })
+    .then(data => {
+        if (data.length === 0) {
+            container.innerHTML = `
+                <div style="font-size: 0.8rem; color: var(--text-muted); text-align: center; padding: 15px 0;">
+                    No registered travel plans found.
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = '';
+        data.forEach(itin => {
+            // Parse created timestamp nicely
+            const createdDate = new Date(itin.created_at);
+            const timeStr = createdDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const dateStr = createdDate.toLocaleDateString([], { month: 'short', day: 'numeric' });
+
+            const item = document.createElement('div');
+            item.className = 'registry-item';
+            item.title = "Click to focus route on map";
+            item.innerHTML = `
+                <div class="registry-title">
+                    <span>${itin.traveler_name}</span>
+                    <span class="registry-date">${timeStr} (${dateStr})</span>
+                </div>
+                <div class="registry-details">
+                    <i class="fa-solid fa-route"></i> ${itin.destinations_list}
+                </div>
+            `;
+
+            // Click registered item to parse and select the first destination on the map!
+            item.addEventListener('click', () => {
+                logFeed('Registry Focus', `Viewing registered route for ${itin.traveler_name}`, 'info');
+                // Extract first route destination
+                const match = itin.destinations_list.match(/(?:Day|Hr|Day 1|Hr 1|Day|Hr)\s*\d*:\s*([^➔|]+)/);
+                if (match && match[1]) {
+                    const spotName = match[1].trim();
+                    // Match to local destinations keys
+                    const matchedKey = Object.keys(destinationsData).find(key => 
+                        destinationsData[key].name.toLowerCase().includes(spotName.toLowerCase()) || 
+                        spotName.toLowerCase().includes(destinationsData[key].name.toLowerCase())
+                    );
+                    if (matchedKey) {
+                        selectDestination(matchedKey);
+                    }
+                }
+            });
+
+            container.appendChild(item);
+        });
+    })
+    .catch(err => {
+        console.error("Registry fetch error:", err);
+        container.innerHTML = `
+            <div style="font-size: 0.8rem; color: var(--color-overloaded); text-align: center; padding: 15px 0;">
+                Database syncing is offline.
+            </div>
+        `;
+    });
+}
+

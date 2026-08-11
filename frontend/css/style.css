@@ -1130,13 +1130,72 @@ select:focus {
         overflow-y: visible !important;
     }
     .right-panel {
+        display: flex !important;
+        flex-direction: column !important;
         height: auto !important;
         max-height: none !important;
         overflow-y: visible !important;
+        gap: 15px;
     }
     .panel {
         height: auto !important;
     }
+    
+    /* Enforce fixed layout heights to prevent stretching */
+    .map-card {
+        height: 520px !important;
+    }
+    .chart-card {
+        height: 300px !important;
+    }
+    .feed-card {
+        height: 220px !important;
+    }
+    .registry-card {
+        height: 250px !important;
+    }
 }
+
+/* ==========================================
+   SAVED ITINERARY REGISTRY LIST STYLES
+   ========================================= */
+
+.registry-item {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 10px;
+    cursor: pointer;
+    transition: var(--transition-normal);
+}
+
+.registry-item:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: var(--color-accent);
+    transform: translateX(2px);
+}
+
+.registry-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #ffffff;
+    display: flex;
+    justify-content: space-between;
+}
+
+.registry-date {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+}
+
+.registry-details {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 
 
