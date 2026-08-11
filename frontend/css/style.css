@@ -1113,3 +1113,30 @@ select:focus {
     font-weight: 500;
 }
 
+/* Height override for laptop displays and small screens */
+@media (max-height: 900px) {
+    .app-container {
+        height: auto !important;
+        min-height: 100vh;
+        overflow-y: auto !important;
+    }
+    .dashboard-grid {
+        height: auto !important;
+        overflow: visible !important;
+    }
+    .left-panel {
+        height: auto !important;
+        max-height: none !important;
+        overflow-y: visible !important;
+    }
+    .right-panel {
+        height: auto !important;
+        max-height: none !important;
+        overflow-y: visible !important;
+    }
+    .panel {
+        height: auto !important;
+    }
+}
+
+
