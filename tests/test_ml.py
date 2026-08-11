@@ -4,9 +4,9 @@ from ml.forecaster import predict_crowd_levels
 from backend.database import DestinationDb
 
 def test_haversine_distance():
-    # Distance between Munnar and Marayoor is approximately 40 km
+    # Distance between Munnar and Marayoor is approximately 23 km
     dist = haversine_distance(10.0889, 77.0595, 10.2736, 77.1472)
-    assert 30.0 < dist < 50.0
+    assert 20.0 < dist < 30.0
 
 def test_incentives():
     mock_dest = DestinationDb(

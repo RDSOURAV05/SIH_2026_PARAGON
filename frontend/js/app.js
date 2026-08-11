@@ -188,6 +188,7 @@ const destinationsData = {
 let currentSelection = 'munnar';
 let currentSimProfile = 'normal';
 let forecastChartInstance = null;
+let capacityChartInstance = null;
 let currentRecommendations = [];
 
 // DOM Element Selectors
@@ -241,6 +242,9 @@ window.addEventListener('DOMContentLoaded', () => {
     loadSavedItineraries(); // Load registered itineraries
     document.getElementById('generate-itinerary-btn').addEventListener('click', handleGenerateItinerary);
     document.getElementById('save-itinerary-btn').addEventListener('click', handleSaveItinerary);
+    
+    // Initial Render of Capacity Bar Chart
+    setTimeout(renderCapacityChart, 200);
 
     logFeed('System Initialization', 'PARAGON Sustainability monitoring online.', 'info');
 });
@@ -317,8 +321,9 @@ function updateMetricsUI() {
         progressBar.classList.add('progress-fill', 'fill-safe');
     }
 
-    // Refresh forecasting chart
+    // Refresh forecasting chart & capacity chart
     renderForecastChart(dest);
+    renderCapacityChart();
 }
 
 // 5. Query Redirection API (`/api/recommend` with Local Fallback)
@@ -753,6 +758,7 @@ function handleGenerateItinerary() {
     const startDateStr = document.getElementById('travel-date').value;
     const duration = parseInt(document.getElementById('travel-days').value);
     const unit = document.getElementById('travel-days-unit').value; // 'days' or 'hours'
+    const groupSize = parseInt(document.getElementById('traveler-count').value) || 2;
     
     if (!name) {
         alert("Please enter your name to personalize the itinerary.");
@@ -772,6 +778,81 @@ function handleGenerateItinerary() {
         return;
     }
 
+    const spotGuides = {
+        munnar: {
+            optimalTime: "07:30 AM - 10:30 AM (for valley mist & low crowds)",
+            routeGuide: "Route: Kochi-Madurai Highway (NH85). 3h 45m drive. Watch out for mountain hairpin curves.",
+            weatherSafety: "Weather: 16°C - 22°C. Misty and cool. Low landslide threat level today.",
+            ecoVoucher: "PARAGON Eco-Voucher: Present this timeline for a 15% discount at Munnar Tea Museum!"
+        },
+        alappuzha: {
+            optimalTime: "03:30 PM - 06:30 PM (for comfortable sunset boat cruise)",
+            routeGuide: "Route: Travel via NH66 from Kochi. 1h 30m drive. Flat urban highways.",
+            weatherSafety: "Weather: 28°C - 32°C. High humidity. Carry water and wear sun block.",
+            ecoVoucher: "PARAGON Eco-Voucher: Enjoy a complimentary lunch boat voucher at Vembanad Lake Cafe!"
+        },
+        athirappilly: {
+            optimalTime: "08:00 AM - 11:00 AM (for pristine mist photography and low crowds)",
+            routeGuide: "Route: Chalakudy-Anamala Road. 1h 15m drive. Forest canopy road.",
+            weatherSafety: "Weather: 26°C - 30°C. Mist spray. Avoid walking on slippery wet rocks near falls.",
+            ecoVoucher: "PARAGON Eco-Voucher: Claim a free eco-packaged drinking water bottle at forest entry!"
+        },
+        kovalam: {
+            optimalTime: "04:00 PM - 07:00 PM (for relaxing sea breeze)",
+            routeGuide: "Route: Take Bypass highway from Trivandrum city. 25 mins drive.",
+            weatherSafety: "Weather: 29°C - 33°C. Tropical. Avoid swimming deep due to strong beach rip tides.",
+            ecoVoucher: "PARAGON Eco-Voucher: Get 10% off organic items at Kovalam Weavers Cooperative!"
+        },
+        wayanad: {
+            optimalTime: "09:00 AM - 12:00 PM (safest forest viewing window)",
+            routeGuide: "Route: Take Ghat highway through Lakkidi Pass. Watch for narrow steep curves.",
+            weatherSafety: "Weather: 20°C - 24°C. Forest shade. Mosquito warning; carry organic repellents.",
+            ecoVoucher: "PARAGON Eco-Voucher: Get 10% off entry tickets at Edakkal Caves!"
+        },
+        vagamon: {
+            optimalTime: "02:00 PM - 05:00 PM (perfect stroll weather)",
+            routeGuide: "Route: Erattupetta-Vagamon Road. 1h 45m drive from Kottayam. Scenic valleys.",
+            weatherSafety: "Weather: 19°C - 23°C. Breezy & cool fog patches. Excellent hiking roads.",
+            ecoVoucher: "PARAGON Eco-Voucher: Get 15% off pine forest and meadows entry tickets!"
+        },
+        varkala: {
+            optimalTime: "04:30 PM - 06:30 PM (spectacular sunset cliff walk)",
+            routeGuide: "Route: NH66 towards Kallambalam. 1h 15m drive from Trivandrum. Narrow local roads.",
+            weatherSafety: "Weather: 28°C - 31°C. Warm sea breeze. Cliff edge has loose gravel; stay on path.",
+            ecoVoucher: "PARAGON Eco-Voucher: Free organic herbal tea voucher at Cliff Organic Cafe!"
+        },
+        ponmudi: {
+            optimalTime: "06:00 AM - 09:00 AM (valley sunrise view)",
+            routeGuide: "Route: Nedumangad-Ponmudi road. 22 Hairpins. Keep headlights on in fog.",
+            weatherSafety: "Weather: 17°C - 21°C. Cold fog. Drive carefully on narrow bends.",
+            ecoVoucher: "PARAGON Eco-Voucher: Get 20% off tea at Ponmudi Hilltops Cafe!"
+        },
+        kumarakom: {
+            optimalTime: "02:00 PM - 05:00 PM (safe bird sanctuary hours)",
+            routeGuide: "Route: Kottayam-Cherthala Road. 30 mins drive from Kottayam. Flat scenery.",
+            weatherSafety: "Weather: 27°C - 31°C. Moderate swamp humidity. Wear walking shoes.",
+            ecoVoucher: "PARAGON Eco-Voucher: Get 15% off at Kumarakom Bird Sanctuary entry!"
+        },
+        fort_kochi: {
+            optimalTime: "04:00 PM - 07:30 PM (Chinese fishing net walks)",
+            routeGuide: "Route: easy street walks. Ferries run from Ernakulam jetty every 20 mins.",
+            weatherSafety: "Weather: 29°C - 32°C. Sea breeze. Paved pedestrian paths.",
+            ecoVoucher: "PARAGON Eco-Voucher: Get 10% off at Fort Kochi Heritage Craft Cooperative!"
+        },
+        vazhachal: {
+            optimalTime: "09:00 AM - 12:00 PM (forest bird watching)",
+            routeGuide: "Route: Chalakudy-Anamala Road. 5km ahead of Athirappilly. Forest drive.",
+            weatherSafety: "Weather: 25°C - 29°C. Deep shade. Safe walkways.",
+            ecoVoucher: "PARAGON Eco-Voucher: Get 10% off honey at Vazhachal tribal cooperative!"
+        },
+        malakkappara: {
+            optimalTime: "08:00 AM - 01:00 PM (deep forest sanctuary experience)",
+            routeGuide: "Route: Chalakudy-Valparai route. Checkpost permit needed. Watch for elephants.",
+            weatherSafety: "Weather: 18°C - 23°C. Clean mountain air. Strict zero-plastic zone.",
+            ecoVoucher: "PARAGON Eco-Voucher: Free local spices package from tribal cooperative!"
+        }
+    };
+
     const timelineContainer = document.getElementById('itinerary-timeline');
     const stepsContainer = document.getElementById('timeline-steps');
     stepsContainer.innerHTML = '';
@@ -781,7 +862,6 @@ function handleGenerateItinerary() {
 
     // Schedule: allocate destinations sequentially
     for (let stepIdx = 0; stepIdx < duration; stepIdx++) {
-        // Pick destination in round-robin fashion from selected
         const baseId = selectedIds[stepIdx % selectedIds.length];
         const dest = destinationsData[baseId];
         if (!dest) continue;
@@ -789,14 +869,13 @@ function handleGenerateItinerary() {
         let isCongested = false;
         let ratio = dest.tourists / dest.capacity;
         let timeLabel = '';
+        let predictedLoad = dest.tourists;
 
         if (unit === 'hours') {
-            // For hourly planning: get current hour + offset
             const now = new Date();
             const currentHour = (now.getHours() + stepIdx) % 24;
             timeLabel = `${currentHour.toString().padStart(2, '0')}:00`;
 
-            // Calculate estimated load at this specific hour (matching forecast curve)
             let timeFactor = 1.0;
             if (currentHour >= 11 && currentHour <= 16) {
                 timeFactor = 1.25;
@@ -805,14 +884,15 @@ function handleGenerateItinerary() {
             } else {
                 timeFactor = 0.85;
             }
-            const predictedLoad = Math.round(dest.tourists * timeFactor);
+            predictedLoad = Math.round(dest.tourists * timeFactor) + groupSize;
             ratio = predictedLoad / dest.capacity;
             isCongested = ratio >= 0.8;
         } else {
-            // Daily planning
             const currentStepDate = new Date(startDate);
             currentStepDate.setDate(startDate.getDate() + stepIdx);
             timeLabel = currentStepDate.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
+            predictedLoad = dest.tourists + groupSize;
+            ratio = predictedLoad / dest.capacity;
             isCongested = ratio >= 0.8;
         }
 
@@ -823,24 +903,22 @@ function handleGenerateItinerary() {
         
         if (isCongested) {
             stepClass = 'congested-step';
-            // Trigger redirection
             const alternatives = calculateLocalRecommendations(baseId);
             if (alternatives.length > 0) {
-                const bestAlt = alternatives[0]; // Ranks safest first
+                const bestAlt = alternatives[0];
                 finalDestId = bestAlt.id;
                 stepName = `${dest.name} ➔ ${bestAlt.name}`;
                 
                 altReason = `
-                    <div class="step-redirect-alert">
-                        <strong>Redirection Active:</strong> ${dest.name} exceeds limits at ${timeLabel} (${Math.round(ratio*100)}% load). 
+                    <div class="step-redirect-alert" style="margin-bottom: 8px;">
+                        <strong>Redirection Active:</strong> ${dest.name} exceeds capacity limits at ${timeLabel} (${Math.round(ratio*100)}% load with your group of ${groupSize}). 
                         Rerouted to <strong>${bestAlt.name}</strong> (${bestAlt.distance} away).
-                        <div class="step-incentive"><i class="fa-solid fa-gift"></i> Incentive: Get 15% off local park tickets!</div>
                     </div>
                 `;
                 
-                logFeed('Itinerary Redirection', `Rerouted ${unit === 'hours' ? 'Hour ' + (stepIdx+1) : 'Day ' + (stepIdx+1)} from crowded ${dest.name} to ${bestAlt.name}`, 'warn');
+                logFeed('Itinerary Redirection', `Rerouted ${unit === 'hours' ? 'Hour ' + (stepIdx+1) : 'Day ' + (stepIdx+1)} from congested ${dest.name} to ${bestAlt.name}`, 'warn');
             } else {
-                altReason = `<div class="step-redirect-alert"><strong>Alert:</strong> Destination is crowded at this time, please proceed with caution.</div>`;
+                altReason = `<div class="step-redirect-alert" style="margin-bottom: 8px;"><strong>Alert:</strong> Area is overloaded at this time. Proceed with caution.</div>`;
             }
         } else {
             logFeed('Itinerary Scheduled', `Scheduled ${unit === 'hours' ? 'Hour ' + (stepIdx+1) : 'Day ' + (stepIdx+1)} to ${dest.name} (Optimal)`, 'info');
@@ -854,17 +932,32 @@ function handleGenerateItinerary() {
             status: isCongested ? "Redirected" : "Safe"
         });
 
+        // Get details
+        const details = spotGuides[finalDestId] || {
+            optimalTime: "09:00 AM - 12:00 PM",
+            routeGuide: "Route: Local roads. Drive safely.",
+            weatherSafety: "Weather: 25°C. Pleasant skies.",
+            ecoVoucher: "PARAGON Eco-Voucher: Support local craft vendors at destination!"
+        };
+
         const stepCard = document.createElement('div');
         stepCard.className = `timeline-step ${stepClass}`;
         stepCard.style.cursor = 'pointer';
         stepCard.innerHTML = `
-            <span class="step-day-badge">${unit === 'hours' ? 'Hour ' + (stepIdx + 1) + ' (' + timeLabel + ')' : 'Day ' + (stepIdx + 1) + ' (' + timeLabel + ')'}</span>
-            <span class="step-name">${stepName}</span>
-            <div class="step-details">Capacity Status: ${isCongested ? "Overcapacity (Rerouted)" : "Safe flow"}</div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px;">
+                <span class="step-day-badge">${unit === 'hours' ? 'Hour ' + (stepIdx + 1) + ' (' + timeLabel + ')' : 'Day ' + (stepIdx + 1) + ' - ' + timeLabel}</span>
+                <span class="badge ${isCongested ? 'status-overloaded' : 'status-safe'}">${isCongested ? 'Redirected' : 'Safe density'}</span>
+            </div>
+            <span class="step-name" style="font-size: 0.95rem; font-weight: 700; margin-bottom: 5px; display: block;">${stepName}</span>
             ${altReason}
+            <div style="margin-top: 8px; font-size: 0.78rem; display: grid; grid-template-columns: 1fr; gap: 6px; border-top: 1px solid var(--card-border); padding-top: 8px;">
+                <div><i class="fa-regular fa-clock" style="color: var(--color-accent);"></i> <strong>Best Slot:</strong> ${details.optimalTime}</div>
+                <div><i class="fa-solid fa-map-pin" style="color: var(--color-accent);"></i> <strong>Travel Guide:</strong> ${details.routeGuide}</div>
+                <div><i class="fa-solid fa-cloud-sun" style="color: var(--color-accent);"></i> <strong>Safety & Weather:</strong> ${details.weatherSafety}</div>
+                <div style="color: var(--color-primary); font-weight: 600;"><i class="fa-solid fa-gift"></i> <strong>Eco Artisan Reward:</strong> ${details.ecoVoucher}</div>
+            </div>
         `;
 
-        // Click a step to center and focus the map on the guide location!
         stepCard.addEventListener('click', () => {
             if (window.selectDestination) {
                 window.selectDestination(finalDestId);
@@ -983,6 +1076,73 @@ function loadSavedItineraries() {
                 Database syncing is offline.
             </div>
         `;
+    });
+}
+
+// Render capacity bar chart comparing active loads across all major hotspots
+function renderCapacityChart() {
+    const canvas = document.getElementById('capacityChart');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    
+    // Sort destinations to display consistent order
+    const spots = Object.values(destinationsData).filter(s => 
+        ['munnar', 'alappuzha', 'athirappilly', 'kovalam', 'wayanad'].includes(s.id)
+    );
+    
+    const labels = spots.map(s => s.name.replace(" Hill Station", "").replace(" Backwaters", "").replace(" Waterfalls", "").replace(" Ecotourism", "").replace(" Beach", ""));
+    const data = spots.map(s => Math.round((s.tourists / s.capacity) * 100));
+
+    // Colors mapping slate styles
+    const colors = spots.map(s => {
+        const ratio = s.tourists / s.capacity;
+        if (ratio > 0.8) return '#dc2626'; // Overloaded Red
+        if (ratio >= 0.5) return '#d97706'; // Moderate Amber
+        return '#16a34a'; // Safe Green
+    });
+
+    if (capacityChartInstance) {
+        capacityChartInstance.destroy();
+    }
+
+    capacityChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Load Factor (%)',
+                data: data,
+                backgroundColor: colors,
+                borderColor: colors,
+                borderWidth: 1,
+                borderRadius: 5
+            }]
+        },
+        options: {
+            indexAxis: 'y', // Horizontal bars
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: (context) => ` Load Factor: ${context.raw}%`
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    min: 0,
+                    max: 100,
+                    grid: { color: '#e2e8f0' },
+                    ticks: { color: '#64748b', font: { family: 'Outfit', size: 9 } }
+                },
+                y: {
+                    grid: { display: false },
+                    ticks: { color: '#0f172a', font: { family: 'Outfit', size: 9, weight: '600' } }
+                }
+            }
+        }
     });
 }
 

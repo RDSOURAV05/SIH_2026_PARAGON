@@ -59,162 +59,12 @@
         <!-- Main Dashboard Grid -->
         <main class="dashboard-grid">
             
-            <!-- Left Panel: Controls & Selection -->
-            <section class="panel left-panel">
-                <!-- Card 1: Destination Monitor -->
-                <div class="card glass monitor-card">
-                    <div class="card-header">
-                        <i class="fa-solid fa-map-location-dot card-icon"></i>
-                        <h2>Destination Monitor</h2>
-                    </div>
-                    <div class="card-content">
-                        <div class="form-group">
-                            <label for="destination-selector">Select Hotspot Location</label>
-                            <div class="select-wrapper">
-                                <select id="destination-selector">
-                                    <!-- Populated dynamically via JS -->
-                                </select>
-                                <i class="fa-solid fa-chevron-down select-arrow"></i>
-                            </div>
-                        </div>
-
-                        <div class="metrics-container">
-                            <div class="metric-row">
-                                <span class="metric-label">Status</span>
-                                <span id="dest-status-badge" class="badge status-safe">Safe</span>
-                            </div>
-                            <div class="metric-row">
-                                <span class="metric-label">Active Tourists</span>
-                                <span id="dest-tourists" class="metric-value">0</span>
-                            </div>
-                            <div class="metric-row">
-                                <span class="metric-label">Safe Carrying Capacity</span>
-                                <span id="dest-capacity" class="metric-value">0</span>
-                            </div>
-                            
-                            <div class="capacity-bar-wrapper">
-                                <div class="capacity-bar-labels">
-                                    <span>Crowd Load</span>
-                                    <span id="dest-percentage">0%</span>
-                                </div>
-                                <div class="progress-track">
-                                    <div id="dest-progress-bar" class="progress-fill" style="width: 0%"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Card 2: Redirection Advisory -->
-                <div class="card glass advisory-card">
-                    <div class="card-header">
-                        <i class="fa-solid fa-circle-exclamation card-icon"></i>
-                        <h2>Redirection Advisory</h2>
-                    </div>
-                    <div class="card-content">
-                        <div id="advisory-alert" class="advisory-message">
-                            <!-- Populated dynamically -->
-                        </div>
-                        
-                        <div class="advisory-recommendations-list" id="recommendations-container">
-                            <!-- Recommended Alternative Cards populated here -->
-                        </div>
-
-                        <button id="route-btn" class="btn btn-primary btn-glow" disabled>
-                            <i class="fa-solid fa-route"></i> Draw Redirection Path
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Card 3: Live Simulator Panel -->
-                <div class="card glass simulator-card">
-                    <div class="card-header">
-                        <i class="fa-solid fa-gauge-high card-icon"></i>
-                        <h2>Live Simulation Engine</h2>
-                    </div>
-                    <div class="card-content">
-                        <p class="section-desc">Override crowd dynamics to test capacity control scenarios in real-time.</p>
-                        <div class="sim-grid">
-                            <button class="btn btn-outline sim-trigger" data-sim="normal">
-                                <i class="fa-solid fa-leaf"></i> Normal
-                            </button>
-                            <button class="btn btn-outline sim-trigger" data-sim="weekend">
-                                <i class="fa-solid fa-umbrella-beach"></i> Weekend Rush
-                            </button>
-                            <button class="btn btn-outline sim-trigger" data-sim="peak">
-                                <i class="fa-solid fa-fire"></i> Peak Season
-                            </button>
-                            <button class="btn btn-outline sim-trigger" data-sim="monsoon">
-                                <i class="fa-solid fa-cloud-showers-heavy"></i> Monsoon Drop
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Card 4: Intelligent Itinerary Planner -->
-                <div class="card glass planner-card">
-                    <div class="card-header">
-                        <i class="fa-solid fa-route card-icon"></i>
-                        <h2>Itinerary Planner & Guide</h2>
-                    </div>
-                    <div class="card-content">
-                        <p class="section-desc">Plan your trip based on available days. Get real-time crowd-safe routes.</p>
-                        
-                        <div class="form-group">
-                            <label for="traveler-name">Traveler Name</label>
-                            <input type="text" id="traveler-name" placeholder="E.g., Juwel" class="planner-input">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="travel-date">Start Date</label>
-                            <input type="date" id="travel-date" class="planner-input">
-                        </div>
-                        
-                        <div class="form-group-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
-                            <div class="form-group" style="margin-bottom: 0;">
-                                <label for="travel-days">Duration</label>
-                                <input type="number" id="travel-days" min="1" max="12" value="2" class="planner-input">
-                            </div>
-                            <div class="form-group" style="margin-bottom: 0;">
-                                <label for="travel-days-unit">Unit</label>
-                                <div class="select-wrapper" style="position: relative;">
-                                    <select id="travel-days-unit" class="planner-input" style="height: 38px; padding: 0.4rem 0.7rem;">
-                                        <option value="days">Days</option>
-                                        <option value="hours">Hours</option>
-                                    </select>
-                                    <i class="fa-solid fa-chevron-down select-arrow" style="right: 10px; font-size: 0.7rem; top: 14px;"></i>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Select Places of Interest</label>
-                            <div class="planner-checklist" id="planner-checklist">
-                                <!-- Populated dynamically -->
-                            </div>
-                        </div>
-
-                        <button id="generate-itinerary-btn" class="btn btn-primary btn-glow btn-full">
-                            <i class="fa-solid fa-wand-magic-sparkles"></i> Generate Itinerary
-                        </button>
-
-                        <div id="itinerary-timeline" class="itinerary-timeline hidden">
-                            <h3>Your Custom Safe Timeline</h3>
-                            <div id="timeline-steps" class="timeline-steps">
-                                <!-- Steps populated here -->
-                            </div>
-                            <button id="save-itinerary-btn" class="btn btn-outline btn-full" style="margin-top: 15px;">
-                                <i class="fa-solid fa-floppy-disk"></i> Register Route in DB
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Center Panel: Leaflet Map -->
-            <section class="panel center-panel">
-                <div class="card glass map-card">
-                    <div id="map"></div>
+            <!-- Left Column: Map & Planner/Simulation -->
+            <section class="panel left-panel" style="gap: 15px;">
+                
+                <!-- Map Card -->
+                <div class="card glass map-card" style="height: 480px;">
+                    <div id="map" style="height: 100%; width: 100%;"></div>
                     <div class="map-overlay-legend glass">
                         <h4>Crowd Status</h4>
                         <div class="legend-item">
@@ -231,49 +81,194 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Bottom Row: Itinerary Planner & Live Simulation -->
+                <div class="bottom-row">
+                    
+                    <!-- Card: Itinerary Planner & Guide -->
+                    <div class="card glass planner-card" style="margin-top: 0;">
+                        <div class="card-header">
+                            <i class="fa-solid fa-route card-icon"></i>
+                            <h2>Itinerary Planner & Guide</h2>
+                        </div>
+                        <div class="card-content">
+                            <div class="planner-form-grid" style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 15px;">
+                                <div>
+                                    <div class="form-group">
+                                        <label for="traveler-name">Traveler Name</label>
+                                        <input type="text" id="traveler-name" placeholder="E.g., Juwel" class="planner-input">
+                                    </div>
+                                    <div class="form-group" style="margin-top: 8px;">
+                                        <label for="travel-date">Start Date</label>
+                                        <input type="date" id="travel-date" class="planner-input">
+                                    </div>
+                                    <div class="form-group-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px;">
+                                        <div class="form-group" style="margin-bottom: 0;">
+                                            <label for="travel-days">Duration</label>
+                                            <input type="number" id="travel-days" min="1" max="12" value="2" class="planner-input">
+                                        </div>
+                                        <div class="form-group" style="margin-bottom: 0;">
+                                            <label for="travel-days-unit">Unit</label>
+                                            <div class="select-wrapper" style="position: relative;">
+                                                <select id="travel-days-unit" class="planner-input" style="height: 38px; padding: 0.4rem 0.7rem;">
+                                                    <option value="days">Days</option>
+                                                    <option value="hours">Hours</option>
+                                                </select>
+                                                <i class="fa-solid fa-chevron-down select-arrow" style="right: 10px; font-size: 0.7rem; top: 14px;"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" style="margin-top: 8px;">
+                                        <label for="traveler-count">Number of Tourists</label>
+                                        <input type="number" id="traveler-count" min="1" value="2" class="planner-input" placeholder="Number of tourists">
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="form-group">
+                                        <label>Select Places of Interest</label>
+                                        <div class="planner-checklist" id="planner-checklist" style="max-height: 175px;">
+                                            <!-- Populated dynamically -->
+                                        </div>
+                                    </div>
+                                    <button id="generate-itinerary-btn" class="btn btn-primary btn-glow btn-full" style="margin-top: 10px;">
+                                        <i class="fa-solid fa-wand-magic-sparkles"></i> Generate Itinerary
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div id="itinerary-timeline" class="itinerary-timeline hidden" style="margin-top: 15px;">
+                                <h3>Your Custom Safe Timeline</h3>
+                                <div id="timeline-steps" class="timeline-steps" style="display: grid; grid-template-columns: 1fr; gap: 10px;">
+                                    <!-- Steps populated here -->
+                                </div>
+                                <button id="save-itinerary-btn" class="btn btn-outline btn-full" style="margin-top: 15px;">
+                                    <i class="fa-solid fa-floppy-disk"></i> Register Route in DB
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card: Live Simulation Engine & Monitor -->
+                    <div class="card glass simulator-card">
+                        <div class="card-header">
+                            <i class="fa-solid fa-gauge-high card-icon"></i>
+                            <h2>Simulation & Monitor</h2>
+                        </div>
+                        <div class="card-content">
+                            <!-- Hotspot Selector (Moved from monitor) -->
+                            <div class="form-group">
+                                <label for="destination-selector">Select Hotspot Location</label>
+                                <div class="select-wrapper" style="position: relative;">
+                                    <select id="destination-selector">
+                                        <!-- Populated dynamically -->
+                                    </select>
+                                    <i class="fa-solid fa-chevron-down select-arrow" style="right: 12px; top: 12px;"></i>
+                                </div>
+                            </div>
+
+                            <!-- Destination Stats -->
+                            <div class="metrics-container" style="margin-top: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                                <div class="metric-row">
+                                    <span class="metric-label">Status</span>
+                                    <span id="dest-status-badge" class="badge status-safe">Safe</span>
+                                </div>
+                                <div class="metric-row">
+                                    <span class="metric-label">Tourists</span>
+                                    <span id="dest-tourists" class="metric-value">0</span>
+                                </div>
+                            </div>
+                            
+                            <div class="capacity-bar-wrapper" style="margin-top: 8px;">
+                                <div class="capacity-bar-labels">
+                                    <span>Crowd Load Factor</span>
+                                    <span id="dest-percentage">0%</span>
+                                </div>
+                                <div class="progress-track">
+                                    <div id="dest-progress-bar" class="progress-fill" style="width: 0%"></div>
+                                </div>
+                            </div>
+
+                            <div style="margin-top: 10px; border-top: 1px solid var(--card-border); padding-top: 8px;">
+                                <p class="section-desc" style="margin-bottom: 8px;">Trigger simulation profile to test redistribution:</p>
+                                <div class="sim-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                                    <button class="btn btn-outline sim-trigger" data-sim="normal" style="padding: 6px;">
+                                        <i class="fa-solid fa-leaf"></i> Normal
+                                    </button>
+                                    <button class="btn btn-outline sim-trigger" data-sim="weekend" style="padding: 6px;">
+                                        <i class="fa-solid fa-umbrella-beach"></i> Weekend
+                                    </button>
+                                    <button class="btn btn-outline sim-trigger" data-sim="peak" style="padding: 6px;">
+                                        <i class="fa-solid fa-fire"></i> Peak
+                                    </button>
+                                    <button class="btn btn-outline sim-trigger" data-sim="monsoon" style="padding: 6px;">
+                                        <i class="fa-solid fa-cloud-showers-heavy"></i> Monsoon
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
             </section>
 
-            <!-- Right Panel: Analytics & Feed -->
+            <!-- Right Column: Graphs & Alerts -->
             <section class="panel right-panel">
-                <!-- Card 4: Load Forecast -->
-                <div class="card glass chart-card">
+                
+                <!-- Chart 1: 12-Hour Load Forecast -->
+                <div class="card glass chart-card" style="height: 250px;">
                     <div class="card-header">
                         <i class="fa-solid fa-chart-line card-icon"></i>
                         <h2>12-Hour Load Forecast</h2>
                     </div>
-                    <div class="card-content chart-container">
+                    <div class="card-content chart-container" style="padding: 10px;">
                         <canvas id="forecastChart"></canvas>
                     </div>
                 </div>
 
-                <!-- Card 5: Real-time System Feed -->
-                <div class="card glass feed-card">
+                <!-- Chart 2: Live Carrying Capacity Load factor (Bar Chart) -->
+                <div class="card glass chart-card" style="height: 250px;">
                     <div class="card-header">
-                        <i class="fa-solid fa-bolt card-icon"></i>
-                        <h2>System Intelligence Feed</h2>
+                        <i class="fa-solid fa-chart-bar card-icon"></i>
+                        <h2>Kerala Hotspots Load Factors</h2>
                     </div>
-                    <div class="card-content feed-wrapper" id="feed-log-container">
-                        <div class="feed-log" id="feed-log">
-                            <!-- Appends messages in real-time -->
-                        </div>
+                    <div class="card-content chart-container" style="padding: 10px;">
+                        <canvas id="capacityChart"></canvas>
                     </div>
                 </div>
 
-                <!-- Card 6: Saved Itinerary Registry -->
+                <!-- Card: Redirection Advisory -->
+                <div class="card glass advisory-card">
+                    <div class="card-header">
+                        <i class="fa-solid fa-circle-exclamation card-icon"></i>
+                        <h2>Redirection Advisory</h2>
+                    </div>
+                    <div class="card-content">
+                        <div id="advisory-alert" class="advisory-message">
+                            <!-- Dynamic -->
+                        </div>
+                        <div class="advisory-recommendations-list" id="recommendations-container" style="display: flex; flex-direction: column; gap: 8px;">
+                            <!-- Dynamic -->
+                        </div>
+                        <button id="route-btn" class="btn btn-primary btn-glow btn-full" style="margin-top: 10px;" disabled>
+                            <i class="fa-solid fa-route"></i> Draw Redirection Path
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card: Saved Registry -->
                 <div class="card glass registry-card">
                     <div class="card-header">
                         <i class="fa-solid fa-list-check card-icon"></i>
                         <h2>Registered Travel Registry</h2>
                     </div>
                     <div class="card-content" style="overflow-y: auto; gap: 8px; max-height: 180px;" id="itinerary-registry-container">
-                        <!-- Saved itineraries listed here -->
-                        <div style="font-size: 0.8rem; color: var(--text-muted); text-align: center; padding: 15px 0;">
-                            No registered travel plans found.
-                        </div>
+                        <!-- Dynamic -->
                     </div>
                 </div>
+
             </section>
-            
+
         </main>
     </div>
 

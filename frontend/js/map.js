@@ -7,14 +7,16 @@ let markersMap = {}; // Stores references to markers by destination ID
 
 // Initialize Leaflet Map
 function initMap() {
-    // Center of Kerala: roughly [9.9, 76.6]
+    // Center of Kerala: [10.2, 76.4]
     map = L.map('map', {
-        center: [9.9, 76.6],
+        center: [10.2, 76.4],
         zoom: 8,
-        minZoom: 6,
-        maxZoom: 14,
+        minZoom: 7,
+        maxZoom: 13,
         zoomControl: true,
-        attributionControl: false
+        attributionControl: false,
+        maxBounds: [[8.0, 74.5], [13.0, 78.5]], // strictly constrain view to Kerala
+        maxBoundsViscosity: 1.0
     });
 
     // Define Base Layers
@@ -36,13 +38,13 @@ function initMap() {
         maxZoom: 20
     });
 
-    // Default layer
-    satellite.addTo(map);
+    // Default layer to minimalistic light Mode
+    lightMode.addTo(map);
 
     const baseMaps = {
-        "<span style='color: #fff; font-weight: 500;'>Satellite View</span>": satellite,
-        "<span style='color: #fff; font-weight: 500;'>Dark Mode</span>": darkMode,
-        "<span style='color: #fff; font-weight: 500;'>Light Mode</span>": lightMode
+        "<span style='color: #0f172a; font-weight: 500;'>Light Map</span>": lightMode,
+        "<span style='color: #0f172a; font-weight: 500;'>Satellite View</span>": satellite,
+        "<span style='color: #0f172a; font-weight: 500;'>Dark Map</span>": darkMode
     };
 
     // Add Layer Control in one location on the map
