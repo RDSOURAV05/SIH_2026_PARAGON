@@ -38,13 +38,13 @@ function initMap() {
         maxZoom: 20
     });
 
-    // Default layer to minimalistic light Mode
-    lightMode.addTo(map);
+    // Default layer to premium dark Mode
+    darkMode.addTo(map);
 
     const baseMaps = {
-        "<span style='color: #0f172a; font-weight: 500;'>Light Map</span>": lightMode,
-        "<span style='color: #0f172a; font-weight: 500;'>Satellite View</span>": satellite,
-        "<span style='color: #0f172a; font-weight: 500;'>Dark Map</span>": darkMode
+        "<span style='color: #f8fafc; font-weight: 500;'>Light Map</span>": lightMode,
+        "<span style='color: #f8fafc; font-weight: 500;'>Satellite View</span>": satellite,
+        "<span style='color: #f8fafc; font-weight: 500;'>Dark Map</span>": darkMode
     };
 
     // Add Layer Control in one location on the map

@@ -2,23 +2,23 @@
 :root {
     --font-primary: 'Outfit', sans-serif;
     
-    /* Clean Slate/Light Color Scheme */
-    --bg-dark: #f5f6f8;
-    --card-bg: #ffffff;
-    --card-border: #e5e7eb;
-    --text-primary: #1e293b;
-    --text-secondary: #4b5563;
-    --text-muted: #6b7280;
+    /* Dark Glassmorphic Theme fitted to Theyyam Aesthetic */
+    --bg-dark: #0f172a;
+    --card-bg: rgba(15, 23, 42, 0.65);
+    --card-border: rgba(255, 255, 255, 0.08);
+    --text-primary: #f8fafc;
+    --text-secondary: #cbd5e1;
+    --text-muted: #94a3b8;
     
-    /* Pastel Green + Peach + Sky Blue Status Colors */
+    /* Vibrant Theyyam Status Colors */
     --color-safe: #10b981;
-    --color-safe-glow: rgba(16, 185, 129, 0.08);
+    --color-safe-glow: rgba(16, 185, 129, 0.15);
     --color-moderate: #fb923c;
-    --color-moderate-glow: rgba(251, 146, 60, 0.08);
+    --color-moderate-glow: rgba(251, 146, 60, 0.15);
     --color-overloaded: #ef4444;
-    --color-overloaded-glow: rgba(239, 68, 68, 0.08);
-    --color-accent: #0ea5e9;
-    --color-accent-glow: rgba(14, 165, 233, 0.08);
+    --color-overloaded-glow: rgba(239, 68, 68, 0.15);
+    --color-accent: #f97316; /* Glowing Theyyam Orange */
+    --color-accent-glow: rgba(249, 115, 22, 0.15);
     
     /* Animations */
     --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -52,8 +52,8 @@
 
 body {
     font-family: var(--font-primary);
-    background: linear-gradient(135deg, #eefdf5 0%, #fff7ed 50%, #f0f9ff 100%) !important;
-    background-attachment: fixed;
+    background: linear-gradient(rgba(15, 23, 42, 0.45), rgba(15, 23, 42, 0.65)), url('../images/theyyam_bg.jpg') no-repeat center center fixed !important;
+    background-size: cover !important;
     color: var(--text-primary);
     min-height: 100vh;
     overflow-x: hidden;
@@ -82,37 +82,37 @@ body {
 
 /* Card Styles */
 .glass {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.4);
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 16px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 2px 4px -2px rgba(0, 0, 0, 0.03);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
 }
 
 .planner-card {
-    background: rgba(240, 253, 244, 0.85) !important;
-    border: 1px solid rgba(187, 247, 208, 0.6) !important;
+    background: rgba(15, 23, 42, 0.65) !important;
+    border: 1px solid rgba(249, 115, 22, 0.15) !important;
 }
 
 .simulator-card {
-    background: rgba(255, 247, 237, 0.85) !important;
-    border: 1px solid rgba(254, 215, 170, 0.6) !important;
+    background: rgba(15, 23, 42, 0.65) !important;
+    border: 1px solid rgba(249, 115, 22, 0.15) !important;
 }
 
 .chart-card {
-    background: rgba(240, 249, 255, 0.85) !important;
-    border: 1px solid rgba(186, 230, 253, 0.6) !important;
+    background: rgba(15, 23, 42, 0.65) !important;
+    border: 1px solid rgba(249, 115, 22, 0.15) !important;
 }
 
 .advisory-card {
-    background: rgba(255, 247, 237, 0.85) !important;
-    border: 1px solid rgba(254, 215, 170, 0.6) !important;
+    background: rgba(15, 23, 42, 0.65) !important;
+    border: 1px solid rgba(249, 115, 22, 0.15) !important;
 }
 
 .registry-card {
-    background: rgba(250, 250, 249, 0.85) !important;
-    border: 1px solid rgba(231, 229, 228, 0.6) !important;
+    background: rgba(15, 23, 42, 0.65) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
 
 /* Header Styling */
@@ -143,7 +143,7 @@ body {
     font-weight: 800;
     letter-spacing: 2px;
     line-height: 1;
-    background: linear-gradient(to right, #0f172a, #475569);
+    background: linear-gradient(to right, #ffffff, #fb923c);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
@@ -339,6 +339,11 @@ select {
     appearance: none;
     cursor: pointer;
     transition: var(--transition-fast);
+}
+
+select option {
+    background-color: #0f172a !important;
+    color: #ffffff !important;
 }
 
 select:focus {
@@ -645,33 +650,34 @@ select:focus {
 }
 
 .leaflet-bar a {
-    background-color: #ffffff !important;
+    background-color: rgba(15, 23, 42, 0.8) !important;
     color: var(--text-primary) !important;
     border-bottom: 1px solid var(--card-border) !important;
     transition: var(--transition-fast);
 }
 
 .leaflet-bar a:hover {
-    background-color: #f3f4f6 !important;
-    color: var(--color-accent) !important;
+    background-color: var(--color-accent) !important;
+    color: #ffffff !important;
 }
 
 .leaflet-popup-content-wrapper {
-    background: #ffffff !important;
-    border: 1px solid var(--card-border);
+    background: rgba(15, 23, 42, 0.9) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     color: var(--text-primary) !important;
     border-radius: 12px !important;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.05) !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
+    backdrop-filter: blur(8px);
 }
 
 .leaflet-popup-tip {
-    background: #ffffff !important;
+    background: rgba(15, 23, 42, 0.9) !important;
 }
 
 /* Custom Leaflet Layer Control Styles */
 .leaflet-control-layers {
-    background: #ffffff !important;
-    border: 1px solid var(--card-border) !important;
+    background: rgba(15, 23, 42, 0.9) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
     border-radius: 12px !important;
     color: var(--text-primary) !important;
     font-family: var(--font-primary) !important;
