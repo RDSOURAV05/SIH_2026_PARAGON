@@ -75,9 +75,11 @@ body {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    width: 100vw;
-    padding: 15px;
-    gap: 15px;
+    width: 93vw;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 10px;
+    gap: 10px;
 }
 
 /* Card Styles */
@@ -208,7 +210,7 @@ body {
 .dashboard-grid {
     display: grid;
     grid-template-columns: 1.6fr 1fr;
-    gap: 15px;
+    gap: 10px;
     flex-grow: 1;
     height: calc(100vh - 105px);
     overflow: hidden;
@@ -217,7 +219,7 @@ body {
 .panel {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 10px;
     height: 100%;
 }
 
@@ -273,8 +275,8 @@ body {
 .card-header {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 18px 20px 12px 20px;
+    gap: 8px;
+    padding: 10px 15px 8px 15px;
     border-bottom: 1px solid var(--card-border);
 }
 
@@ -293,11 +295,11 @@ body {
 }
 
 .card-content {
-    padding: 20px;
+    padding: 12px 15px;
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 10px;
 }
 
 .section-desc {
@@ -625,8 +627,8 @@ select:focus {
 
 /* Middle Panel: Map Layout */
 .map-card {
-    height: 480px;
-    margin-bottom: 15px;
+    height: 440px;
+    margin-bottom: 10px;
     flex-shrink: 0;
     position: relative;
 }
@@ -1166,7 +1168,7 @@ select:focus {
     
     /* Enforce fixed layout heights to prevent stretching */
     .map-card {
-        height: 520px !important;
+        height: 440px !important;
         flex-shrink: 0 !important;
     }
     .chart-card {

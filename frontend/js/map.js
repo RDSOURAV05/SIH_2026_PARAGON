@@ -59,6 +59,46 @@ function initMap() {
 
     // Reposition zoom controls to top-right for dashboard style
     map.zoomControl.setPosition('topright');
+
+    // Draw Kerala boundary cutout mask to hide other states
+    const keralaCoordinates = [
+        [12.78, 74.88], // Kasaragod north-west
+        [12.60, 75.35], // Kasaragod north-east
+        [12.05, 75.45], // Kannur east
+        [11.75, 76.10], // Wayanad north-east
+        [11.50, 76.45], // Nilgiris border
+        [10.95, 76.70], // Palakkad east
+        [10.20, 76.85], // Anamalai border
+        [9.75, 77.25],  // Idukki east
+        [9.15, 77.35],  // Pathanamthitta east
+        [8.50, 77.20],  // Trivandrum east
+        [8.20, 77.35],  // Padmanabhapuram area (Kanyakumari border)
+        [8.28, 77.20],  // Trivandrum south (Neyyattinkara)
+        [8.35, 76.90],  // Trivandrum coast
+        [8.88, 76.50],  // Kollam coast
+        [9.45, 76.25],  // Alappuzha coast
+        [9.95, 76.20],  // Kochi coast
+        [10.60, 75.95], // Thrissur coast
+        [11.15, 75.80], // Kozhikode coast
+        [12.00, 75.15], // Kannur coast
+        [12.78, 74.88]  // Kasaragod coast (close loop)
+    ];
+
+    const outerBounds = [
+        [0.0, 60.0],
+        [0.0, 90.0],
+        [25.0, 90.0],
+        [25.0, 60.0]
+    ];
+
+    L.polygon([outerBounds, keralaCoordinates], {
+        fillColor: '#f1f5f9',
+        fillOpacity: 0.65,
+        color: '#ea580c', // Glowing Theyyam orange border around Kerala
+        weight: 3,
+        opacity: 0.8,
+        interactive: false
+    }).addTo(map);
 }
 
 // Function to return CSS class based on crowd ratio
@@ -149,7 +189,6 @@ function updateMapMarkers(destinations, selectedId) {
     });
 }
 
-// Draw dotted route line connecting selected hotspot to recommendations
 function drawRedirectionRoute(sourceId, altDestinations) {
     routeGroup.clearLayers();
 
@@ -166,25 +205,43 @@ function drawRedirectionRoute(sourceId, altDestinations) {
         const altCoords = altMarker.getLatLng();
         bounds.extend(altCoords);
 
-        // Draw dotted polyline with cyan neon style
-        const polyline = L.polyline([sourceCoords, altCoords], {
-            color: '#0ea5e9',
-            weight: 3,
-            dashArray: '6, 10',
-            opacity: 0.85,
-            className: 'route-polyline-glow'
-        }).addTo(routeGroup);
+        // Fetch driving directions from OSRM road routing engine
+        const sourceQuery = `${sourceCoords.lng},${sourceCoords.lat}`;
+        const destQuery = `${altCoords.lng},${altCoords.lat}`;
+        const osrmUrl = `https://router.projectosrm.org/route/v1/driving/${sourceQuery};${destQuery}?overview=full&geometries=geojson`;
 
-        // Add small decorative text marker at midpoint or near alternative
+        fetch(osrmUrl)
+            .then(res => res.json())
+            .then(data => {
+                if (data.routes && data.routes.length > 0) {
+                    const routeGeom = data.routes[0].geometry;
+                    const latLngs = routeGeom.coordinates.map(coord => [coord[1], coord[0]]);
+                    
+                    // Draw actual road route line (glowing Theyyam orange)
+                    L.polyline(latLngs, {
+                        color: '#ea580c',
+                        weight: 4.5,
+                        opacity: 0.85,
+                        className: 'route-polyline-glow'
+                    }).addTo(routeGroup);
+                } else {
+                    drawFallbackStraightLine(sourceCoords, altCoords);
+                }
+            })
+            .catch(() => {
+                drawFallbackStraightLine(sourceCoords, altCoords);
+            });
+
+        // Add small decorative text marker at midpoint
         const midLat = (sourceCoords.lat + altCoords.lat) / 2;
         const midLng = (sourceCoords.lng + altCoords.lng) / 2;
         
         const labelHtml = `
             <div style="
                 background: rgba(15, 23, 42, 0.85);
-                border: 1px solid rgba(14, 165, 233, 0.4);
-                box-shadow: 0 0 10px rgba(14, 165, 233, 0.2);
-                color: #0ea5e9;
+                border: 1px solid rgba(234, 88, 12, 0.4);
+                box-shadow: 0 0 10px rgba(234, 88, 12, 0.2);
+                color: #ea580c;
                 font-family: 'Outfit', sans-serif;
                 font-size: 0.65rem;
                 font-weight: 700;
@@ -211,6 +268,16 @@ function drawRedirectionRoute(sourceId, altDestinations) {
         animate: true,
         duration: 1.2
     });
+}
+
+function drawFallbackStraightLine(sourceCoords, altCoords) {
+    L.polyline([sourceCoords, altCoords], {
+        color: '#ea580c',
+        weight: 3.5,
+        dashArray: '6, 10',
+        opacity: 0.85,
+        className: 'route-polyline-glow'
+    }).addTo(routeGroup);
 }
 
 // Clear active routes
