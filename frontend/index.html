@@ -3,161 +3,209 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kerala Sustainable Tourism & Intelligent Tourist Distribution System</title>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Leaflet.js GIS Map CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Main Style Sheet -->
-    <link rel="stylesheet" href="/static/css/style.css">
+    <title>Kerala Sustainable Tourism Redirection Dashboard</title>
+    
+    <!-- Outfit Font from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
+    <!-- Leaflet.js CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+          
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Leaflet.js JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" 
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 </head>
 <body>
-    <div class="glass-app-wrapper">
-        <!-- TOP NAVIGATION BAR -->
-        <header class="app-header">
-            <div class="logo-area">
-                <i class="fa-solid fa-leaf logo-icon animate-pulse"></i>
+    <!-- Starry background overlay -->
+    <div class="bg-stars"></div>
+    <div class="bg-glow"></div>
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header glass">
+            <div class="header-logo">
+                <i class="fa-solid fa-compass-drafting logo-icon"></i>
                 <div class="logo-text">
-                    <h1>GreenTour Kerala</h1>
-                    <span>Dynamic AI Sustainable Tourism Management</span>
+                    <h1>PARAGON</h1>
+                    <span>Kerala Sustainable Tourism System</span>
                 </div>
             </div>
-            <div class="header-status">
-                <div class="status-indicator">
-                    <span class="pulse-dot green"></span>
-                    <span class="status-label">AI Engine: Active</span>
+            
+            <div class="header-stats">
+                <div class="stat-badge">
+                    <span class="pulse-indicator status-green" id="system-status-indicator"></span>
+                    <span class="stat-label">System Status:</span>
+                    <span class="stat-val" id="system-status-text">Optimal</span>
                 </div>
-                <div class="status-indicator">
-                    <span class="pulse-dot blue"></span>
-                    <span class="status-label">GIS Feed: Live</span>
+                <div class="stat-badge clock-badge">
+                    <i class="fa-regular fa-clock"></i>
+                    <span id="live-clock">22:22:00</span>
                 </div>
             </div>
         </header>
 
-        <!-- MAIN LAYOUT -->
-        <main class="app-body">
-            <!-- LEFT PANEL: CONTROLS & DYNAMIC RECOMMENDATIONS -->
-            <section class="left-panel scrollable">
-                <!-- Traveler Section -->
-                <div class="glass-card">
+        <!-- Main Dashboard Grid -->
+        <main class="dashboard-grid">
+            
+            <!-- Left Panel: Controls & Selection -->
+            <section class="panel left-panel">
+                <!-- Card 1: Destination Monitor -->
+                <div class="card glass monitor-card">
                     <div class="card-header">
-                        <i class="fa-solid fa-user-gear header-icon"></i>
-                        <h2>Traveler Preferences</h2>
+                        <i class="fa-solid fa-map-location-dot card-icon"></i>
+                        <h2>Destination Monitor</h2>
                     </div>
-                    <div class="form-group">
-                        <label>Select Interest Categories:</label>
-                        <div class="checkbox-group">
-                            <label class="chip-checkbox">
-                                <input type="checkbox" name="preferences" value="hill_station" checked>
-                                <span><i class="fa-solid fa-mountain"></i> Hill Stations</span>
-                            </label>
-                            <label class="chip-checkbox">
-                                <input type="checkbox" name="preferences" value="backwaters" checked>
-                                <span><i class="fa-solid fa-water"></i> Backwaters</span>
-                            </label>
-                            <label class="chip-checkbox">
-                                <input type="checkbox" name="preferences" value="beach">
-                                <span><i class="fa-solid fa-umbrella-beach"></i> Beaches</span>
-                            </label>
-                            <label class="chip-checkbox">
-                                <input type="checkbox" name="preferences" value="wildlife">
-                                <span><i class="fa-solid fa-tree"></i> Wildlife / Eco</span>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="destination-select">Select Target Destination:</label>
-                        <select id="destination-select" class="custom-select">
-                            <option value="">-- Choose a Destination --</option>
-                            <!-- Dynamically populated -->
-                        </select>
-                    </div>
-                    <button id="plan-btn" class="btn btn-primary btn-full">
-                        <i class="fa-solid fa-compass"></i> Calculate Routing & Load
-                    </button>
-                </div>
-
-                <!-- Live Congestion Alerts / Redirection Panel -->
-                <div id="redirection-card" class="glass-card hidden warning-border">
-                    <div class="card-header">
-                        <i class="fa-solid fa-triangle-exclamation alert-icon animated-bounce"></i>
-                        <h2>Capacity / Safety Alert</h2>
-                    </div>
-                    <div id="alert-content">
-                        <!-- Alert warnings here -->
-                    </div>
-                    <div class="divider"></div>
-                    <h3>Intelligent Redirection Alternatives</h3>
-                    <div id="alternatives-list" class="alternatives-container">
-                        <!-- Alternative recommendation list -->
-                    </div>
-                </div>
-
-                <!-- Simulation Tools (for SIH Judges) -->
-                <div class="glass-card admin-card">
-                    <div class="card-header">
-                        <i class="fa-solid fa-sliders header-icon"></i>
-                        <h2>SIH Live Simulation Panel</h2>
-                    </div>
-                    <p class="admin-desc">Simulate live parameter changes to demonstrate immediate AI-driven tourist redistribution.</p>
-                    <div class="sim-actions-grid">
-                        <button onclick="simulateCrowd(1, 1200)" class="btn btn-sim btn-red">
-                            <i class="fa-solid fa-users"></i> Overcrowd Munnar
-                        </button>
-                        <button onclick="simulateCrowd(1, 400)" class="btn btn-sim btn-green">
-                            <i class="fa-solid fa-users-slash"></i> Clear Munnar
-                        </button>
-                        <button onclick="simulateWeather(4, 0.2)" class="btn btn-sim btn-orange">
-                            <i class="fa-solid fa-cloud-showers-heavy"></i> Storm at Alleppey
-                        </button>
-                        <button onclick="simulateWeather(4, 1.0)" class="btn btn-sim btn-blue">
-                            <i class="fa-solid fa-sun"></i> Clear Alleppey
-                        </button>
-                    </div>
-                </div>
-            </section>
-
-            <!-- RIGHT PANEL: GIS MAP & LOAD ANALYTICS -->
-            <section class="right-panel">
-                <!-- GIS Leaflet Map Card -->
-                <div class="glass-card map-card flex-grow">
-                    <div class="map-controls">
-                        <span class="badge badge-green"><i class="fa-solid fa-circle"></i> Safe Capacity</span>
-                        <span class="badge badge-orange"><i class="fa-solid fa-circle"></i> Moderate Load</span>
-                        <span class="badge badge-red"><i class="fa-solid fa-circle"></i> Overloaded / Alert</span>
-                    </div>
-                    <div id="map" class="map-container"></div>
-                </div>
-
-                <!-- Load Forecasting Visualizer -->
-                <div class="glass-card forecast-card">
-                    <div class="card-header">
-                        <i class="fa-solid fa-chart-line header-icon"></i>
-                        <h2>Tourist Load Forecasting (Next 12 Hours)</h2>
-                    </div>
-                    <div class="forecast-content">
-                        <div class="selected-spot-info">
-                            <h3 id="forecast-spot-name">Select a destination to view forecast</h3>
-                            <div class="capacity-bar-container">
-                                <div id="forecast-bar" class="capacity-bar" style="width: 0%"></div>
+                    <div class="card-content">
+                        <div class="form-group">
+                            <label for="destination-selector">Select Hotspot Location</label>
+                            <div class="select-wrapper">
+                                <select id="destination-selector">
+                                    <!-- Populated dynamically via JS -->
+                                </select>
+                                <i class="fa-solid fa-chevron-down select-arrow"></i>
                             </div>
-                            <span id="forecast-ratio-text"></span>
                         </div>
-                        <div id="chart-bars" class="chart-bars-container">
-                            <!-- Visual forecasting bars will go here -->
+
+                        <div class="metrics-container">
+                            <div class="metric-row">
+                                <span class="metric-label">Status</span>
+                                <span id="dest-status-badge" class="badge status-safe">Safe</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">Active Tourists</span>
+                                <span id="dest-tourists" class="metric-value">0</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">Safe Carrying Capacity</span>
+                                <span id="dest-capacity" class="metric-value">0</span>
+                            </div>
+                            
+                            <div class="capacity-bar-wrapper">
+                                <div class="capacity-bar-labels">
+                                    <span>Crowd Load</span>
+                                    <span id="dest-percentage">0%</span>
+                                </div>
+                                <div class="progress-track">
+                                    <div id="dest-progress-bar" class="progress-fill" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Redirection Advisory -->
+                <div class="card glass advisory-card">
+                    <div class="card-header">
+                        <i class="fa-solid fa-circle-exclamation card-icon"></i>
+                        <h2>Redirection Advisory</h2>
+                    </div>
+                    <div class="card-content">
+                        <div id="advisory-alert" class="advisory-message">
+                            <!-- Populated dynamically -->
+                        </div>
+                        
+                        <div class="advisory-recommendations-list" id="recommendations-container">
+                            <!-- Recommended Alternative Cards populated here -->
+                        </div>
+
+                        <button id="route-btn" class="btn btn-primary btn-glow" disabled>
+                            <i class="fa-solid fa-route"></i> Draw Redirection Path
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card 3: Live Simulator Panel -->
+                <div class="card glass simulator-card">
+                    <div class="card-header">
+                        <i class="fa-solid fa-gauge-high card-icon"></i>
+                        <h2>Live Simulation Engine</h2>
+                    </div>
+                    <div class="card-content">
+                        <p class="section-desc">Override crowd dynamics to test capacity control scenarios in real-time.</p>
+                        <div class="sim-grid">
+                            <button class="btn btn-outline sim-trigger" data-sim="normal">
+                                <i class="fa-solid fa-leaf"></i> Normal
+                            </button>
+                            <button class="btn btn-outline sim-trigger" data-sim="weekend">
+                                <i class="fa-solid fa-umbrella-beach"></i> Weekend Rush
+                            </button>
+                            <button class="btn btn-outline sim-trigger" data-sim="peak">
+                                <i class="fa-solid fa-fire"></i> Peak Season
+                            </button>
+                            <button class="btn btn-outline sim-trigger" data-sim="monsoon">
+                                <i class="fa-solid fa-cloud-showers-heavy"></i> Monsoon Drop
+                            </button>
                         </div>
                     </div>
                 </div>
             </section>
+
+            <!-- Center Panel: Leaflet Map -->
+            <section class="panel center-panel">
+                <div class="card glass map-card">
+                    <div id="map"></div>
+                    <div class="map-overlay-legend glass">
+                        <h4>Crowd Status</h4>
+                        <div class="legend-item">
+                            <span class="legend-dot dot-green"></span>
+                            <span>Safe (&lt;50%)</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-dot dot-orange"></span>
+                            <span>Moderate (50%-80%)</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-dot dot-red"></span>
+                            <span>Overloaded (&gt;80%)</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Panel: Analytics & Feed -->
+            <section class="panel right-panel">
+                <!-- Card 4: Load Forecast -->
+                <div class="card glass chart-card">
+                    <div class="card-header">
+                        <i class="fa-solid fa-chart-line card-icon"></i>
+                        <h2>12-Hour Load Forecast</h2>
+                    </div>
+                    <div class="card-content chart-container">
+                        <canvas id="forecastChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Card 5: Real-time System Feed -->
+                <div class="card glass feed-card">
+                    <div class="card-header">
+                        <i class="fa-solid fa-bolt card-icon"></i>
+                        <h2>System Intelligence Feed</h2>
+                    </div>
+                    <div class="card-content feed-wrapper" id="feed-log-container">
+                        <div class="feed-log" id="feed-log">
+                            <!-- Appends messages in real-time -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
         </main>
     </div>
 
-    <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    <!-- App scripts -->
-    <script src="/static/js/map.js"></script>
-    <script src="/static/js/app.js"></script>
+    <!-- Application Script Files -->
+    <script src="js/map.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>

@@ -1,112 +1,233 @@
-// ==========================================
-// GIS MAP SERVICE (LEAFLET.JS IMPLEMENTATION)
-// ==========================================
+// map.js - Leaflet Map Integration with CartoDB Dark Tiles
 
 let map;
-let markerLayer;
-let redirectionLine;
+let markerGroup;
+let routeGroup;
+let markersMap = {}; // Stores references to markers by destination ID
 
+// Initialize Leaflet Map
 function initMap() {
-    // Center of Kerala
-    const keralaCenter = [9.85, 76.55];
-    
-    // Initialize map
+    // Center of Kerala: roughly [9.9, 76.6]
     map = L.map('map', {
+        center: [9.9, 76.6],
+        zoom: 8,
+        minZoom: 6,
+        maxZoom: 14,
         zoomControl: true,
-        scrollWheelZoom: true
-    }).setView(keralaCenter, 8);
+        attributionControl: false
+    });
 
-    // CartoDB Dark Matter tiles (sleek dark theme)
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    // Define Base Layers
+    const satellite = L.tileLayer('https://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+        attribution: '&copy; Google Maps',
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+        maxZoom: 20
+    });
+
+    const darkMode = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap &copy; CARTO',
         subdomains: 'abcd',
         maxZoom: 20
+    });
+
+    const lightMode = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap &copy; CARTO',
+        subdomains: 'abcd',
+        maxZoom: 20
+    });
+
+    // Default layer
+    satellite.addTo(map);
+
+    const baseMaps = {
+        "<span style='color: #fff; font-weight: 500;'>Satellite View</span>": satellite,
+        "<span style='color: #fff; font-weight: 500;'>Dark Mode</span>": darkMode,
+        "<span style='color: #fff; font-weight: 500;'>Light Mode</span>": lightMode
+    };
+
+    // Add Layer Control in one location on the map
+    L.control.layers(baseMaps, null, { 
+        position: 'topleft', 
+        collapsed: false 
     }).addTo(map);
 
-    markerLayer = L.layerGroup().addTo(map);
+    // Initialize layer groups
+    markerGroup = L.layerGroup().addTo(map);
+    routeGroup = L.layerGroup().addTo(map);
+
+    // Reposition zoom controls to top-right for dashboard style
+    map.zoomControl.setPosition('topright');
 }
 
-function updateMapMarkers(destinations, selectedDestId = null, alternatives = []) {
-    // Clear old markers and lines
-    markerLayer.clearLayers();
-    if (redirectionLine) {
-        map.removeLayer(redirectionLine);
-        redirectionLine = null;
-    }
+// Function to return CSS class based on crowd ratio
+function getStatusClass(ratio) {
+    if (ratio > 0.8) return 'overloaded';
+    if (ratio >= 0.5) return 'moderate';
+    return 'safe';
+}
 
-    const altIds = alternatives.map(a => a.destination.id);
-    let selectedLatLng = null;
-    const alternativeLatLngs = [];
+// Helper to capital-case string
+function capitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+// Clear all markers from map
+function clearMapMarkers() {
+    markerGroup.clearLayers();
+    markersMap = {};
+}
+
+// Update Map Markers with current state
+function updateMapMarkers(destinations, selectedId) {
+    clearMapMarkers();
 
     destinations.forEach(dest => {
-        const ratio = dest.current_crowd / dest.carrying_capacity;
-        let colorClass = 'green';
+        const ratio = dest.tourists / dest.capacity;
+        let statusClass = getStatusClass(ratio);
         
-        if (dest.weather_index <= 0.3 || ratio >= 1.0) {
-            colorClass = 'red';
-        } else if (ratio >= 0.7) {
-            colorClass = 'orange';
-        }
-
-        const isSelected = dest.id == selectedDestId;
-        const isAlternative = altIds.includes(dest.id);
-
-        if (isSelected) selectedLatLng = [dest.lat, dest.lon];
-        if (isAlternative) alternativeLatLngs.push([dest.lat, dest.lon]);
-
-        // Creating custom pin
-        const customIcon = L.divIcon({
-            className: 'custom-div-icon',
-            html: `<div class="marker-pin ${colorClass} ${isSelected ? 'animate-pulse' : ''}" style="${isSelected ? 'transform: scale(1.3) rotate(-45deg); z-index: 1000;' : ''}"></div>`,
-            iconSize: [30, 42],
-            iconAnchor: [15, 42],
-            popupAnchor: [0, -36]
-        });
-
-        const popupContent = `
-            <div style="font-family: 'Outfit', sans-serif; padding: 5px;">
-                <h4 style="margin: 0 0 5px 0; color: #fff;">${dest.name}</h4>
-                <p style="margin: 0 0 5px 0; font-size: 0.75rem; color: #94a3b8; text-transform: uppercase;">Category: ${dest.category.replace('_', ' ')}</p>
-                <div style="margin-bottom: 5px; font-size: 0.8rem;">
-                    <strong>Visitors:</strong> ${dest.current_crowd} / ${dest.carrying_capacity}
-                    <span style="color: ${colorClass === 'red' ? '#ff3366' : (colorClass === 'orange' ? '#ff9f1c' : '#00f5a0')}">
-                        (${Math.round(ratio * 100)}% Load)
-                    </span>
-                </div>
-                <div style="font-size: 0.8rem; margin-bottom: 8px;">
-                    <strong>Weather suitability:</strong> ${Math.round(dest.weather_index * 100)}%
-                </div>
-                <button onclick="selectDestinationFromMap(${dest.id})" style="background: linear-gradient(135deg, #00f5a0, #00d2ff); border: none; color: #000; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; cursor: pointer; width: 100%;">
-                    Select Destination
-                </button>
+        // If this is an alternative recommendation route target and the source is overloaded,
+        // we can style it as 'alternative' if it's currently selected's recommendation
+        const isSelected = dest.id === selectedId;
+        
+        // Define Custom Glowing Icon using L.divIcon
+        const iconHtml = `
+            <div class="custom-pin pin-${statusClass} ${isSelected ? 'selected-pin' : ''}" id="marker-${dest.id}">
+                <div class="pin-ring"></div>
+                <div class="pin-dot"></div>
             </div>
         `;
 
-        const marker = L.marker([dest.lat, dest.lon], { icon: customIcon })
-            .bindPopup(popupContent)
-            .addTo(markerLayer);
+        const customIcon = L.divIcon({
+            html: iconHtml,
+            className: 'custom-leaflet-icon',
+            iconSize: [32, 32],
+            iconAnchor: [16, 16],
+            popupAnchor: [0, -16]
+        });
 
+        // Popup HTML Template
+        const popupContent = `
+            <div style="font-family: 'Outfit', sans-serif; padding: 4px;">
+                <h4 style="margin: 0 0 6px 0; font-size: 1.05rem; font-weight: 600; color: #fff;">${dest.name}</h4>
+                <p style="margin: 0 0 4px 0; font-size: 0.8rem; color: #94a3b8;">
+                    Type: <span style="color: #0ea5e9; font-weight: 500;">${dest.type}</span>
+                </p>
+                <div style="display: flex; justify-content: space-between; gap: 20px; margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 6px;">
+                    <div>
+                        <span style="display: block; font-size: 0.65rem; text-transform: uppercase; color: #64748b;">Tourists</span>
+                        <span style="font-size: 0.85rem; font-weight: 600; color: #f8fafc;">${dest.tourists}</span>
+                    </div>
+                    <div>
+                        <span style="display: block; font-size: 0.65rem; text-transform: uppercase; color: #64748b;">Status</span>
+                        <span style="font-size: 0.85rem; font-weight: 600; color: ${statusClass === 'safe' ? '#10b981' : statusClass === 'moderate' ? '#f59e0b' : '#ef4444'}">${capitalize(statusClass)}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        const marker = L.marker(dest.coords, { icon: customIcon })
+            .bindPopup(popupContent, { closeButton: false })
+            .addTo(markerGroup);
+
+        // Bind click event to sync with UI select
+        marker.on('click', () => {
+            // Trigger selection in app.js
+            if (window.selectDestination) {
+                window.selectDestination(dest.id);
+            }
+        });
+
+        // Store reference
+        markersMap[dest.id] = marker;
+        
+        // Open popup if this destination is the currently selected one
         if (isSelected) {
             marker.openPopup();
         }
     });
+}
 
-    // Draw dynamic redirection lines
-    if (selectedLatLng && alternativeLatLngs.length > 0) {
-        const pathCoords = alternativeLatLngs.map(altLatLng => [selectedLatLng, altLatLng]);
-        
-        redirectionLine = L.polyline(pathCoords, {
-            color: '#00f5a0',
+// Draw dotted route line connecting selected hotspot to recommendations
+function drawRedirectionRoute(sourceId, altDestinations) {
+    routeGroup.clearLayers();
+
+    const sourceDest = markersMap[sourceId];
+    if (!sourceDest) return;
+
+    const sourceCoords = sourceDest.getLatLng();
+    const bounds = L.latLngBounds([sourceCoords]);
+
+    altDestinations.forEach((alt, idx) => {
+        const altMarker = markersMap[alt.id];
+        if (!altMarker) return;
+
+        const altCoords = altMarker.getLatLng();
+        bounds.extend(altCoords);
+
+        // Draw dotted polyline with cyan neon style
+        const polyline = L.polyline([sourceCoords, altCoords], {
+            color: '#0ea5e9',
             weight: 3,
-            dashArray: '5, 8',
-            opacity: 0.85
-        }).addTo(map);
+            dashArray: '6, 10',
+            opacity: 0.85,
+            className: 'route-polyline-glow'
+        }).addTo(routeGroup);
 
-        // Zoom to fit the target and its alternatives
-        const bounds = L.latLngBounds([selectedLatLng, ...alternativeLatLngs]);
-        map.fitBounds(bounds, { padding: [50, 50] });
-    } else if (selectedLatLng) {
-        // Zoom to the single selected spot
-        map.setView(selectedLatLng, 10);
+        // Add small decorative text marker at midpoint or near alternative
+        const midLat = (sourceCoords.lat + altCoords.lat) / 2;
+        const midLng = (sourceCoords.lng + altCoords.lng) / 2;
+        
+        const labelHtml = `
+            <div style="
+                background: rgba(15, 23, 42, 0.85);
+                border: 1px solid rgba(14, 165, 233, 0.4);
+                box-shadow: 0 0 10px rgba(14, 165, 233, 0.2);
+                color: #0ea5e9;
+                font-family: 'Outfit', sans-serif;
+                font-size: 0.65rem;
+                font-weight: 700;
+                padding: 2px 6px;
+                border-radius: 4px;
+                white-space: nowrap;
+            ">
+                Reroute #${idx + 1}
+            </div>
+        `;
+        
+        L.marker([midLat, midLng], {
+            icon: L.divIcon({
+                html: labelHtml,
+                className: 'route-midpoint-label',
+                iconSize: [60, 20],
+                iconAnchor: [30, 10]
+            })
+        }).addTo(routeGroup);
+    });
+
+    // Smoothly pan & zoom the map to fit all route endpoints
+    map.flyToBounds(bounds.pad(0.2), {
+        animate: true,
+        duration: 1.2
+    });
+}
+
+// Clear active routes
+function clearRoute() {
+    routeGroup.clearLayers();
+}
+
+// Focus on a specific destination
+function focusDestination(id) {
+    const marker = markersMap[id];
+    if (marker) {
+        map.panTo(marker.getLatLng(), { animate: true, duration: 0.8 });
+        marker.openPopup();
     }
 }
+
+// Expose map controllers to window context
+window.initMap = initMap;
+window.updateMapMarkers = updateMapMarkers;
+window.drawRedirectionRoute = drawRedirectionRoute;
+window.clearRoute = clearRoute;
+window.focusDestination = focusDestination;
