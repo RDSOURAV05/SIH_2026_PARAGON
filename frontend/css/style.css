@@ -222,6 +222,7 @@ body {
 }
 
 .left-panel {
+    display: block !important;
     height: 100%;
     overflow-y: auto !important;
     padding-right: 6px;
@@ -620,6 +621,7 @@ select:focus {
 /* Middle Panel: Map Layout */
 .map-card {
     height: 480px;
+    margin-bottom: 15px;
     flex-shrink: 0;
     position: relative;
 }
