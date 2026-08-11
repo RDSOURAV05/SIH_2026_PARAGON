@@ -20,14 +20,35 @@
     <!-- Custom Style Sheet -->
     <link rel="stylesheet" href="css/style.css">
     
-    <!-- Chart.js CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Local Chart.js copy -->
+    <script src="js/chart.js"></script>
     
     <!-- Leaflet.js JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" 
             integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 </head>
 <body>
+    <script>
+        // Remote diagnostic tool catching early runtime exceptions
+        window.onerror = function(message, source, lineno, colno, error) {
+            const errorDiv = document.createElement('div');
+            errorDiv.style.position = 'fixed';
+            errorDiv.style.bottom = '15px';
+            errorDiv.style.left = '15px';
+            errorDiv.style.background = '#fee2e2';
+            errorDiv.style.color = '#b91c1c';
+            errorDiv.style.border = '2px solid #ef4444';
+            errorDiv.style.padding = '12px 15px';
+            errorDiv.style.borderRadius = '10px';
+            errorDiv.style.zIndex = '999999';
+            errorDiv.style.fontSize = '0.82rem';
+            errorDiv.style.fontFamily = 'Outfit, sans-serif';
+            errorDiv.style.boxShadow = '0 10px 15px -3px rgba(0,0,0,0.1)';
+            errorDiv.innerHTML = `<strong>JavaScript Diagnostic Alert:</strong><br>${message}<br><small style="color: #4b5563;">in ${source} at line ${lineno}:${colno}</small>`;
+            document.body.appendChild(errorDiv);
+            return false;
+        };
+    </script>
     <!-- Starry background overlay -->
     <div class="bg-stars"></div>
     <div class="bg-glow"></div>
