@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kerala Sustainable Tourism & Intelligent Tourist Distribution System</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Leaflet.js GIS Map CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Style Sheet -->
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="glass-app-wrapper">
+        <!-- TOP NAVIGATION BAR -->
+        <header class="app-header">
+            <div class="logo-area">
+                <i class="fa-solid fa-leaf logo-icon animate-pulse"></i>
+                <div class="logo-text">
+                    <h1>GreenTour Kerala</h1>
+                    <span>Dynamic AI Sustainable Tourism Management</span>
+                </div>
+            </div>
+            <div class="header-status">
+                <div class="status-indicator">
+                    <span class="pulse-dot green"></span>
+                    <span class="status-label">AI Engine: Active</span>
+                </div>
+                <div class="status-indicator">
+                    <span class="pulse-dot blue"></span>
+                    <span class="status-label">GIS Feed: Live</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- MAIN LAYOUT -->
+        <main class="app-body">
+            <!-- LEFT PANEL: CONTROLS & DYNAMIC RECOMMENDATIONS -->
+            <section class="left-panel scrollable">
+                <!-- Traveler Section -->
+                <div class="glass-card">
+                    <div class="card-header">
+                        <i class="fa-solid fa-user-gear header-icon"></i>
+                        <h2>Traveler Preferences</h2>
+                    </div>
+                    <div class="form-group">
+                        <label>Select Interest Categories:</label>
+                        <div class="checkbox-group">
+                            <label class="chip-checkbox">
+                                <input type="checkbox" name="preferences" value="hill_station" checked>
+                                <span><i class="fa-solid fa-mountain"></i> Hill Stations</span>
+                            </label>
+                            <label class="chip-checkbox">
+                                <input type="checkbox" name="preferences" value="backwaters" checked>
+                                <span><i class="fa-solid fa-water"></i> Backwaters</span>
+                            </label>
+                            <label class="chip-checkbox">
+                                <input type="checkbox" name="preferences" value="beach">
+                                <span><i class="fa-solid fa-umbrella-beach"></i> Beaches</span>
+                            </label>
+                            <label class="chip-checkbox">
+                                <input type="checkbox" name="preferences" value="wildlife">
+                                <span><i class="fa-solid fa-tree"></i> Wildlife / Eco</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="destination-select">Select Target Destination:</label>
+                        <select id="destination-select" class="custom-select">
+                            <option value="">-- Choose a Destination --</option>
+                            <!-- Dynamically populated -->
+                        </select>
+                    </div>
+                    <button id="plan-btn" class="btn btn-primary btn-full">
+                        <i class="fa-solid fa-compass"></i> Calculate Routing & Load
+                    </button>
+                </div>
+
+                <!-- Live Congestion Alerts / Redirection Panel -->
+                <div id="redirection-card" class="glass-card hidden warning-border">
+                    <div class="card-header">
+                        <i class="fa-solid fa-triangle-exclamation alert-icon animated-bounce"></i>
+                        <h2>Capacity / Safety Alert</h2>
+                    </div>
+                    <div id="alert-content">
+                        <!-- Alert warnings here -->
+                    </div>
+                    <div class="divider"></div>
+                    <h3>Intelligent Redirection Alternatives</h3>
+                    <div id="alternatives-list" class="alternatives-container">
+                        <!-- Alternative recommendation list -->
+                    </div>
+                </div>
+
+                <!-- Simulation Tools (for SIH Judges) -->
+                <div class="glass-card admin-card">
+                    <div class="card-header">
+                        <i class="fa-solid fa-sliders header-icon"></i>
+                        <h2>SIH Live Simulation Panel</h2>
+                    </div>
+                    <p class="admin-desc">Simulate live parameter changes to demonstrate immediate AI-driven tourist redistribution.</p>
+                    <div class="sim-actions-grid">
+                        <button onclick="simulateCrowd(1, 1200)" class="btn btn-sim btn-red">
+                            <i class="fa-solid fa-users"></i> Overcrowd Munnar
+                        </button>
+                        <button onclick="simulateCrowd(1, 400)" class="btn btn-sim btn-green">
+                            <i class="fa-solid fa-users-slash"></i> Clear Munnar
+                        </button>
+                        <button onclick="simulateWeather(4, 0.2)" class="btn btn-sim btn-orange">
+                            <i class="fa-solid fa-cloud-showers-heavy"></i> Storm at Alleppey
+                        </button>
+                        <button onclick="simulateWeather(4, 1.0)" class="btn btn-sim btn-blue">
+                            <i class="fa-solid fa-sun"></i> Clear Alleppey
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- RIGHT PANEL: GIS MAP & LOAD ANALYTICS -->
+            <section class="right-panel">
+                <!-- GIS Leaflet Map Card -->
+                <div class="glass-card map-card flex-grow">
+                    <div class="map-controls">
+                        <span class="badge badge-green"><i class="fa-solid fa-circle"></i> Safe Capacity</span>
+                        <span class="badge badge-orange"><i class="fa-solid fa-circle"></i> Moderate Load</span>
+                        <span class="badge badge-red"><i class="fa-solid fa-circle"></i> Overloaded / Alert</span>
+                    </div>
+                    <div id="map" class="map-container"></div>
+                </div>
+
+                <!-- Load Forecasting Visualizer -->
+                <div class="glass-card forecast-card">
+                    <div class="card-header">
+                        <i class="fa-solid fa-chart-line header-icon"></i>
+                        <h2>Tourist Load Forecasting (Next 12 Hours)</h2>
+                    </div>
+                    <div class="forecast-content">
+                        <div class="selected-spot-info">
+                            <h3 id="forecast-spot-name">Select a destination to view forecast</h3>
+                            <div class="capacity-bar-container">
+                                <div id="forecast-bar" class="capacity-bar" style="width: 0%"></div>
+                            </div>
+                            <span id="forecast-ratio-text"></span>
+                        </div>
+                        <div id="chart-bars" class="chart-bars-container">
+                            <!-- Visual forecasting bars will go here -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <!-- App scripts -->
+    <script src="/static/js/map.js"></script>
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
