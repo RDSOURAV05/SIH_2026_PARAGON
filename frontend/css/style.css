@@ -3,22 +3,22 @@
     --font-primary: 'Outfit', sans-serif;
     
     /* Clean Slate/Light Color Scheme */
-    --bg-dark: #f8fafc;
+    --bg-dark: #f5f6f8;
     --card-bg: #ffffff;
-    --card-border: #e2e8f0;
-    --text-primary: #0f172a;
-    --text-secondary: #334155;
-    --text-muted: #64748b;
+    --card-border: #e5e7eb;
+    --text-primary: #1e293b;
+    --text-secondary: #4b5563;
+    --text-muted: #6b7280;
     
-    /* Status Colors */
-    --color-safe: #16a34a;
-    --color-safe-glow: rgba(22, 163, 74, 0.1);
-    --color-moderate: #d97706;
-    --color-moderate-glow: rgba(217, 119, 6, 0.1);
-    --color-overloaded: #dc2626;
-    --color-overloaded-glow: rgba(220, 38, 38, 0.1);
-    --color-accent: #0284c7;
-    --color-accent-glow: rgba(2, 132, 199, 0.1);
+    /* Pastel Green + Peach + Sky Blue Status Colors */
+    --color-safe: #10b981;
+    --color-safe-glow: rgba(16, 185, 129, 0.08);
+    --color-moderate: #fb923c;
+    --color-moderate-glow: rgba(251, 146, 60, 0.08);
+    --color-overloaded: #ef4444;
+    --color-overloaded-glow: rgba(239, 68, 68, 0.08);
+    --color-accent: #0ea5e9;
+    --color-accent-glow: rgba(14, 165, 233, 0.08);
     
     /* Animations */
     --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -447,21 +447,21 @@ select:focus {
 }
 
 .message-safe {
-    background: rgba(22, 163, 74, 0.06);
+    background: rgba(16, 185, 129, 0.08);
     border-color: var(--color-safe);
-    color: #15803d;
+    color: #065f46;
 }
 
 .message-moderate {
-    background: rgba(217, 119, 6, 0.06);
+    background: rgba(251, 146, 60, 0.08);
     border-color: var(--color-moderate);
-    color: #b45309;
+    color: #9a3412;
 }
 
 .message-overloaded {
-    background: rgba(220, 38, 38, 0.06);
+    background: rgba(239, 68, 68, 0.08);
     border-color: var(--color-overloaded);
-    color: #b91c1c;
+    color: #991b1b;
     animation: borderPulse 1.5s infinite alternate;
 }
 

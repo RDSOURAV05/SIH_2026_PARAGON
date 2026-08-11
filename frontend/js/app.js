@@ -1096,9 +1096,9 @@ function renderCapacityChart() {
     // Colors mapping slate styles
     const colors = spots.map(s => {
         const ratio = s.tourists / s.capacity;
-        if (ratio > 0.8) return '#dc2626'; // Overloaded Red
-        if (ratio >= 0.5) return '#d97706'; // Moderate Amber
-        return '#16a34a'; // Safe Green
+        if (ratio > 0.8) return '#ef4444'; // Red
+        if (ratio >= 0.5) return '#fb923c'; // Pastel Peach
+        return '#10b981'; // Pastel Green
     });
 
     if (capacityChartInstance) {
