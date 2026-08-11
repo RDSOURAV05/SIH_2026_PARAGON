@@ -44,3 +44,20 @@ class RecommendationResponse(BaseModel):
     congestion_ratio: float
     alert_message: Optional[str] = None
     recommendations: List[AlternativeRecommendation]
+
+
+# Itinerary validation schemas
+import datetime
+
+class ItineraryCreate(BaseModel):
+    traveler_name: str
+    travel_date: str
+    destinations_list: str
+
+class Itinerary(ItineraryCreate):
+    id: int
+    created_at: datetime.datetime
+
+    class Config:
+        from_attributes = True
+

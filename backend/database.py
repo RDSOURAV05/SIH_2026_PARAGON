@@ -1,5 +1,6 @@
 import os
-from sqlalchemy import create_engine, Column, Integer, String, Float
+import datetime
+from sqlalchemy import create_engine, Column, Integer, String, Float, DateTime
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./kerala_tourism.db")
@@ -10,13 +11,11 @@ else:
     engine = create_engine(DATABASE_URL)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
 Base = declarative_base()
 
-# SQLAlchemy Model for Destination
+
 class DestinationDb(Base):
     __tablename__ = "destinations"
-
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
     category = Column(String)
@@ -30,6 +29,16 @@ class DestinationDb(Base):
     weather_index = Column(Float, default=1.0)
     description = Column(String)
     image_url = Column(String, nullable=True)
+
+
+class ItineraryDb(Base):
+    __tablename__ = "itineraries"
+    id = Column(Integer, primary_key=True, index=True)
+    traveler_name = Column(String, index=True)
+    travel_date = Column(String)
+    destinations_list = Column(String)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+
 
 def get_db():
     db = SessionLocal()
