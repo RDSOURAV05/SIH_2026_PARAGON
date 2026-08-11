@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from typing import List, Optional
-from backend.database import get_db, DestinationDb
-from backend.schemas import Destination, RecommendationRequest, RecommendationResponse, AlternativeRecommendation
+from backend.database import get_db, DestinationDb, ItineraryDb
+from backend.schemas import Destination, RecommendationRequest, RecommendationResponse, AlternativeRecommendation, Itinerary, ItineraryCreate
 from ml.optimizer import find_alternatives
 from ml.forecaster import predict_crowd_levels
 
@@ -146,3 +146,21 @@ def simulate_weather(dest_id: int, index: float, db: Session = Depends(get_db)):
     db.refresh(dest)
     
     return {"message": f"Successfully updated weather index for {dest.name} to {dest.weather_index}."}
+
+
+@router.post("/itineraries", response_model=Itinerary)
+def save_itinerary(itinerary: ItineraryCreate, db: Session = Depends(get_db)):
+    db_itinerary = ItineraryDb(
+        traveler_name=itinerary.traveler_name,
+        travel_date=itinerary.travel_date,
+        destinations_list=itinerary.destinations_list
+    )
+    db.add(db_itinerary)
+    db.commit()
+    db.refresh(db_itinerary)
+    return db_itinerary
+
+
+@router.get("/itineraries", response_model=List[Itinerary])
+def get_itineraries(db: Session = Depends(get_db)):
+    return db.query(ItineraryDb).order_by(ItineraryDb.created_at.desc()).all()
