@@ -799,6 +799,12 @@ function applySimulationProfile(profile) {
     // Refresh UI parameters
     selectDestination(currentSelection);
 
+    // Regenerate active itinerary if visible to reflect simulation changes!
+    const timelineContainer = document.getElementById('itinerary-timeline');
+    if (timelineContainer && !timelineContainer.classList.contains('hidden')) {
+        handleGenerateItinerary();
+    }
+
     // Push feed messages
     const profileLabel = profile.charAt(0).toUpperCase() + profile.slice(1);
     logFeed('Simulation Switched', `Active simulation set to '${profileLabel}'. Parameters applied.`, 'info');
