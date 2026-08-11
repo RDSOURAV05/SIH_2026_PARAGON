@@ -220,6 +220,8 @@ body {
 
 .left-panel {
     overflow-y: auto;
+    min-height: 0;
+    max-height: 100%;
 }
 
 .center-panel {
