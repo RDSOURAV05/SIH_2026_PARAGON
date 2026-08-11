@@ -610,46 +610,43 @@ select:focus {
     border: 1px solid var(--card-border) !important;
     border-radius: 8px !important;
     overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5) !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
 }
 
 .leaflet-bar a {
-    background-color: rgba(15, 23, 42, 0.8) !important;
+    background-color: #ffffff !important;
     color: var(--text-primary) !important;
     border-bottom: 1px solid var(--card-border) !important;
     transition: var(--transition-fast);
 }
 
 .leaflet-bar a:hover {
-    background-color: rgba(30, 41, 59, 0.9) !important;
+    background-color: #f3f4f6 !important;
     color: var(--color-accent) !important;
 }
 
 .leaflet-popup-content-wrapper {
-    background: rgba(15, 23, 42, 0.9) !important;
-    backdrop-filter: blur(12px);
+    background: #ffffff !important;
     border: 1px solid var(--card-border);
     color: var(--text-primary) !important;
     border-radius: 12px !important;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.6) !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.05) !important;
 }
 
 .leaflet-popup-tip {
-    background: rgba(15, 23, 42, 0.9) !important;
+    background: #ffffff !important;
 }
 
 /* Custom Leaflet Layer Control Styles */
 .leaflet-control-layers {
-    background: rgba(15, 23, 42, 0.85) !important;
-    backdrop-filter: blur(12px) !important;
-    -webkit-backdrop-filter: blur(12px) !important;
+    background: #ffffff !important;
     border: 1px solid var(--card-border) !important;
     border-radius: 12px !important;
     color: var(--text-primary) !important;
     font-family: var(--font-primary) !important;
     font-size: 0.8rem !important;
     padding: 10px 14px !important;
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5) !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.05) !important;
 }
 
 .leaflet-control-layers-list label {
