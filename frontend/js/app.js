@@ -372,13 +372,14 @@ window.addEventListener('DOMContentLoaded', () => {
 // Dynamic Dropdown populator
 function populateDropdown() {
     destSelector.innerHTML = '';
-    // Show primary hotspots first, followed by alternates
-    const primaryHotspots = ['munnar', 'alappuzha', 'athirappilly', 'kovalam', 'wayanad'];
     
-    primaryHotspots.forEach(key => {
+    // Sort spots alphabetically for selection dropdown
+    const sortedSpots = Object.values(destinationsData).sort((a, b) => a.name.localeCompare(b.name));
+    
+    sortedSpots.forEach(spot => {
         const option = document.createElement('option');
-        option.value = key;
-        option.textContent = destinationsData[key].name;
+        option.value = spot.id;
+        option.textContent = spot.name;
         destSelector.appendChild(option);
     });
 }
@@ -765,9 +766,10 @@ function applySimulationProfile(profile) {
     let totalHotspotTourists = 0;
     let activeBreachesCount = 0;
 
-    const mainHotspots = ['munnar', 'alappuzha', 'athirappilly', 'kovalam'];
+    const mainHotspots = ['munnar', 'alappuzha', 'thekkady', 'kovalam', 'wayanad'];
     mainHotspots.forEach(id => {
         const dest = destinationsData[id];
+        if (!dest) return;
         totalHotspotCapacity += dest.capacity;
         totalHotspotTourists += dest.tourists;
         if (dest.tourists > dest.capacity) {
@@ -1313,7 +1315,7 @@ function renderCapacityChart() {
     
     // Sort destinations to display consistent order
     const spots = Object.values(destinationsData).filter(s => 
-        ['munnar', 'alappuzha', 'athirappilly', 'kovalam', 'wayanad'].includes(s.id)
+        ['munnar', 'alappuzha', 'thekkady', 'kovalam', 'wayanad'].includes(s.id)
     );
     
     const labels = spots.map(s => s.name.replace(" Hill Station", "").replace(" Backwaters", "").replace(" Waterfalls", "").replace(" Ecotourism", "").replace(" Beach", ""));
