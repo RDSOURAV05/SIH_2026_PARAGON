@@ -47,6 +47,7 @@ frontend_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__f
 if os.path.exists(frontend_path):
     app.mount("/css", StaticFiles(directory=os.path.join(frontend_path, "css")), name="css")
     app.mount("/js", StaticFiles(directory=os.path.join(frontend_path, "js")), name="js")
+    app.mount("/images", StaticFiles(directory=os.path.join(frontend_path, "images")), name="images")
     app.mount("/static", StaticFiles(directory=frontend_path), name="static")
 
     # Serve index.html at root
