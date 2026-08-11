@@ -4,183 +4,303 @@
 const destinationsData = {
     munnar: {
         id: 'munnar',
-        name: 'Munnar Hill Station',
+        name: 'Munnar Tea Gardens',
         type: 'Hill Station',
         coords: [10.0889, 77.0595],
         capacity: 1200,
-        simTourists: {
-            normal: 720,
-            weekend: 1050,
-            peak: 1480,
-            monsoon: 240
-        },
-        tourists: 720, // Current visitor count (updated dynamically)
-        alternatives: ['vagamon', 'ponmudi']
-    },
-    alappuzha: {
-        id: 'alappuzha',
-        name: 'Alappuzha Backwaters',
-        type: 'Backwater Tourism',
-        coords: [9.4981, 76.3388],
-        capacity: 900,
-        simTourists: {
-            normal: 580,
-            weekend: 820,
-            peak: 1050,
-            monsoon: 180
-        },
-        tourists: 580,
-        alternatives: ['kumarakom', 'fort_kochi']
-    },
-    athirappilly: {
-        id: 'athirappilly',
-        name: 'Athirappilly Waterfalls',
-        type: 'Nature/Waterfall',
-        coords: [10.2851, 76.5413],
-        capacity: 1500,
-        simTourists: {
-            normal: 850,
-            weekend: 1350,
-            peak: 1650,
-            monsoon: 520
-        },
-        tourists: 850,
-        alternatives: ['vazhachal', 'malakkappara']
-    },
-    kovalam: {
-        id: 'kovalam',
-        name: 'Kovalam Beach',
-        type: 'Beach Hotspot',
-        coords: [8.4004, 76.9787],
-        capacity: 1000,
-        simTourists: {
-            normal: 610,
-            weekend: 850,
-            peak: 1100,
-            monsoon: 210
-        },
-        tourists: 610,
-        alternatives: ['varkala']
+        simTourists: { normal: 720, weekend: 1050, peak: 1480, monsoon: 240 },
+        tourists: 720,
+        alternatives: ['vagamon', 'ponmudi', 'idukki']
     },
     wayanad: {
         id: 'wayanad',
-        name: 'Wayanad Wildlife Park',
-        type: 'Ecotourism',
-        coords: [11.6267, 76.2163],
-        capacity: 800,
-        simTourists: {
-            normal: 380,
-            weekend: 540,
-            peak: 720,
-            monsoon: 120
-        },
-        tourists: 380,
-        alternatives: [] // Serving as stable low-density destination
+        name: 'Wayanad Spice Hills',
+        type: 'Hill Station',
+        coords: [11.6854, 76.1320],
+        capacity: 900,
+        simTourists: { normal: 540, weekend: 780, peak: 1020, monsoon: 180 },
+        tourists: 540,
+        alternatives: ['silent_valley', 'nelliampathy']
+    },
+    thekkady: {
+        id: 'thekkady',
+        name: 'Thekkady Wildlife Sanctuary',
+        type: 'Wildlife & Nature',
+        coords: [9.6031, 77.1614],
+        capacity: 1000,
+        simTourists: { normal: 620, weekend: 890, peak: 1150, monsoon: 220 },
+        tourists: 620,
+        alternatives: ['idukki', 'vagamon']
     },
     vagamon: {
         id: 'vagamon',
-        name: 'Vagamon Meadows',
-        type: 'Eco-Hill Station',
-        coords: [9.6908, 76.9048],
-        capacity: 1000,
-        simTourists: {
-            normal: 290,
-            weekend: 380,
-            peak: 490,
-            monsoon: 90
-        },
+        name: 'Vagamon Pine Meadows',
+        type: 'Hill Station',
+        coords: [9.6874, 76.9048],
+        capacity: 800,
+        simTourists: { normal: 290, weekend: 410, peak: 550, monsoon: 90 },
         tourists: 290,
-        alternatives: []
+        alternatives: ['ponmudi']
     },
     ponmudi: {
         id: 'ponmudi',
-        name: 'Ponmudi Hills',
+        name: 'Ponmudi Winding Valleys',
         type: 'Hill Station',
-        coords: [8.7602, 77.1166],
+        coords: [8.7602, 77.1167],
         capacity: 600,
-        simTourists: {
-            normal: 140,
-            weekend: 210,
-            peak: 310,
-            monsoon: 50
-        },
+        simTourists: { normal: 140, weekend: 210, peak: 320, monsoon: 50 },
         tourists: 140,
         alternatives: []
     },
+    idukki: {
+        id: 'idukki',
+        name: 'Idukki Arch Dam',
+        type: 'Nature & Forest',
+        coords: [9.8493, 76.9749],
+        capacity: 800,
+        simTourists: { normal: 310, weekend: 450, peak: 620, monsoon: 80 },
+        tourists: 310,
+        alternatives: ['vagamon']
+    },
+    nelliampathy: {
+        id: 'nelliampathy',
+        name: 'Nelliampathy Orchards',
+        type: 'Hill Station',
+        coords: [10.5332, 76.6938],
+        capacity: 600,
+        simTourists: { normal: 180, weekend: 270, peak: 390, monsoon: 60 },
+        tourists: 180,
+        alternatives: []
+    },
+    silent_valley: {
+        id: 'silent_valley',
+        name: 'Silent Valley National Park',
+        type: 'Nature/Reserve',
+        coords: [11.1306, 76.4287],
+        capacity: 500,
+        simTourists: { normal: 110, weekend: 150, peak: 220, monsoon: 40 },
+        tourists: 110,
+        alternatives: []
+    },
+    malampuzha: {
+        id: 'malampuzha',
+        name: 'Malampuzha Dam Gardens',
+        type: 'Nature & Park',
+        coords: [10.8251, 76.6823],
+        capacity: 1000,
+        simTourists: { normal: 480, weekend: 720, peak: 950, monsoon: 150 },
+        tourists: 480,
+        alternatives: ['nelliampathy']
+    },
+    alappuzha: {
+        id: 'alappuzha',
+        name: 'Alleppey Backwaters',
+        type: 'Backwaters',
+        coords: [9.4981, 76.3388],
+        capacity: 1200,
+        simTourists: { normal: 850, weekend: 1120, peak: 1450, monsoon: 280 },
+        tourists: 850,
+        alternatives: ['kumarakom', 'kollam', 'munroe_island']
+    },
     kumarakom: {
         id: 'kumarakom',
-        name: 'Kumarakom Village',
+        name: 'Kumarakom Lake Resorts',
         type: 'Backwaters',
-        coords: [9.5931, 76.4225],
+        coords: [9.5935, 76.4262],
         capacity: 800,
-        simTourists: {
-            normal: 280,
-            weekend: 390,
-            peak: 490,
-            monsoon: 110
-        },
+        simTourists: { normal: 280, weekend: 410, peak: 580, monsoon: 100 },
         tourists: 280,
+        alternatives: ['munroe_island']
+    },
+    kollam: {
+        id: 'kollam',
+        name: 'Kollam Gateway Canals',
+        type: 'Backwaters',
+        coords: [8.8932, 76.6141],
+        capacity: 900,
+        simTourists: { normal: 320, weekend: 480, peak: 650, monsoon: 90 },
+        tourists: 320,
+        alternatives: ['munroe_island', 'ashtamudi']
+    },
+    munroe_island: {
+        id: 'munroe_island',
+        name: 'Munroe Island Villages',
+        type: 'Backwaters',
+        coords: [8.9912, 76.6163],
+        capacity: 600,
+        simTourists: { normal: 190, weekend: 290, peak: 420, monsoon: 60 },
+        tourists: 190,
         alternatives: []
+    },
+    kavvayi: {
+        id: 'kavvayi',
+        name: 'Kavvayi Backwaters',
+        type: 'Backwaters',
+        coords: [12.0722, 75.1843],
+        capacity: 500,
+        simTourists: { normal: 120, weekend: 180, peak: 260, monsoon: 40 },
+        tourists: 120,
+        alternatives: []
+    },
+    ashtamudi: {
+        id: 'ashtamudi',
+        name: 'Ashtamudi Lake Shores',
+        type: 'Backwaters',
+        coords: [8.9482, 76.5823],
+        capacity: 700,
+        simTourists: { normal: 210, weekend: 320, peak: 450, monsoon: 70 },
+        tourists: 210,
+        alternatives: []
+    },
+    kovalam: {
+        id: 'kovalam',
+        name: 'Kovalam Lighthouse Beach',
+        type: 'Beach',
+        coords: [8.4021, 76.9785],
+        capacity: 1500,
+        simTourists: { normal: 920, weekend: 1350, peak: 1680, monsoon: 310 },
+        tourists: 920,
+        alternatives: ['varkala', 'poovar', 'shanghumugham']
+    },
+    varkala: {
+        id: 'varkala',
+        name: 'Varkala Cliff Beach',
+        type: 'Beach',
+        coords: [8.7303, 76.7077],
+        capacity: 1200,
+        simTourists: { normal: 540, weekend: 790, peak: 1050, monsoon: 180 },
+        tourists: 540,
+        alternatives: ['poovar', 'shanghumugham']
     },
     fort_kochi: {
         id: 'fort_kochi',
         name: 'Fort Kochi Heritage',
-        type: 'Historical Heritage',
-        coords: [9.9627, 76.2427],
+        type: 'Coastal Heritage',
+        coords: [9.9658, 76.2421],
         capacity: 1500,
-        simTourists: {
-            normal: 580,
-            weekend: 800,
-            peak: 980,
-            monsoon: 220
-        },
-        tourists: 580,
-        alternatives: []
+        simTourists: { normal: 780, weekend: 1150, peak: 1420, monsoon: 250 },
+        tourists: 780,
+        alternatives: ['marari']
     },
-    vazhachal: {
-        id: 'vazhachal',
-        name: 'Vazhachal Falls Area',
-        type: 'Waterfall/Forest',
-        coords: [10.2989, 76.5684],
+    marari: {
+        id: 'marari',
+        name: 'Marari Fishing Beach',
+        type: 'Beach',
+        coords: [9.6015, 76.2974],
         capacity: 800,
-        simTourists: {
-            normal: 210,
-            weekend: 320,
-            peak: 450,
-            monsoon: 130
-        },
-        tourists: 210,
+        simTourists: { normal: 290, weekend: 420, peak: 590, monsoon: 90 },
+        tourists: 290,
         alternatives: []
     },
-    malakkappara: {
-        id: 'malakkappara',
-        name: 'Malakkappara Tea Valleys',
-        type: 'Eco-Valley',
-        coords: [10.2783, 76.8436],
-        capacity: 500,
-        simTourists: {
-            normal: 110,
-            weekend: 160,
-            peak: 240,
-            monsoon: 40
-        },
-        tourists: 110,
+    poovar: {
+        id: 'poovar',
+        name: 'Poovar Estuary Banks',
+        type: 'Estuary/Beach',
+        coords: [8.3182, 77.0754],
+        capacity: 600,
+        simTourists: { normal: 180, weekend: 280, peak: 410, monsoon: 60 },
+        tourists: 180,
         alternatives: []
     },
-    varkala: {
-        id: 'varkala',
-        name: 'Varkala Beach Cliff',
-        type: 'Coastal Beach',
-        coords: [8.7303, 76.7077],
-        capacity: 1100,
-        simTourists: {
-            normal: 420,
-            weekend: 590,
-            peak: 750,
-            monsoon: 150
-        },
+    bekal: {
+        id: 'bekal',
+        name: 'Bekal Beach Fort',
+        type: 'Beach/Fort',
+        coords: [12.3892, 75.0315],
+        capacity: 1000,
+        simTourists: { normal: 420, weekend: 630, peak: 890, monsoon: 130 },
         tourists: 420,
+        alternatives: ['kannur']
+    },
+    kannur: {
+        id: 'kannur',
+        name: 'Kannur Theyyam Coast',
+        type: 'Beach & Culture',
+        coords: [11.8745, 75.3704],
+        capacity: 800,
+        simTourists: { normal: 290, weekend: 420, peak: 590, monsoon: 90 },
+        tourists: 290,
+        alternatives: ['kizhunna']
+    },
+    kozhikode: {
+        id: 'kozhikode',
+        name: 'Kozhikode Calicut Beach',
+        type: 'Coastal Port',
+        coords: [11.2588, 75.7804],
+        capacity: 1200,
+        simTourists: { normal: 680, weekend: 950, peak: 1250, monsoon: 210 },
+        tourists: 680,
+        alternatives: ['kannur', 'kizhunna']
+    },
+    kizhunna: {
+        id: 'kizhunna',
+        name: 'Kizhunna Secluded Shores',
+        type: 'Beach',
+        coords: [11.8152, 75.4338],
+        capacity: 500,
+        simTourists: { normal: 90, weekend: 140, peak: 210, monsoon: 30 },
+        tourists: 90,
         alternatives: []
+    },
+    shanghumugham: {
+        id: 'shanghumugham',
+        name: 'Shanghumugham Beach',
+        type: 'Beach',
+        coords: [8.4802, 76.9131],
+        capacity: 800,
+        simTourists: { normal: 340, weekend: 520, peak: 710, monsoon: 110 },
+        tourists: 340,
+        alternatives: []
+    },
+    trivandrum: {
+        id: 'trivandrum',
+        name: 'Thiruvananthapuram City',
+        type: 'Capital Heritage',
+        coords: [8.5241, 76.9366],
+        capacity: 1500,
+        simTourists: { normal: 820, weekend: 1180, peak: 1450, monsoon: 320 },
+        tourists: 820,
+        alternatives: ['padmanabhapuram', 'jatayu', 'shanghumugham']
+    },
+    thrissur: {
+        id: 'thrissur',
+        name: 'Thrissur Cultural Center',
+        type: 'Heritage/Culture',
+        coords: [10.5276, 76.2144],
+        capacity: 1500,
+        simTourists: { normal: 710, weekend: 1050, peak: 1380, monsoon: 240 },
+        tourists: 710,
+        alternatives: ['guruvayur']
+    },
+    guruvayur: {
+        id: 'guruvayur',
+        name: 'Guruvayur Temple Town',
+        type: 'Spiritual Center',
+        coords: [10.5946, 76.0381],
+        capacity: 2000,
+        simTourists: { normal: 1150, weekend: 1650, peak: 2100, monsoon: 480 },
+        tourists: 1150,
+        alternatives: []
+    },
+    padmanabhapuram: {
+        id: 'padmanabhapuram',
+        name: 'Padmanabhapuram Palace',
+        type: 'Heritage/Palace',
+        coords: [8.2504, 77.3274],
+        capacity: 700,
+        simTourists: { normal: 220, weekend: 340, peak: 490, monsoon: 80 },
+        tourists: 220,
+        alternatives: []
+    },
+    jatayu: {
+        id: 'jatayu',
+        name: 'Jatayu Earth Center',
+        type: 'Mythology Park',
+        coords: [8.8874, 76.8674],
+        capacity: 1200,
+        simTourists: { normal: 540, weekend: 820, peak: 1150, monsoon: 180 },
+        tourists: 540,
+        alternatives: ['padmanabhapuram', 'ponmudi']
     }
 };
 
@@ -728,20 +848,15 @@ function initClock() {
 
 let generatedItinerarySteps = [];
 
-// Populate checklist of tourist spots
+// // Populate checklist of tourist spots dynamically from all 30 spots
 function populatePlannerChecklist() {
     const container = document.getElementById('planner-checklist');
     container.innerHTML = '';
     
-    const spots = [
-        { id: 'munnar', name: 'Munnar Hill Station' },
-        { id: 'alappuzha', name: 'Alappuzha Backwaters' },
-        { id: 'athirappilly', name: 'Athirappilly Waterfalls' },
-        { id: 'kovalam', name: 'Kovalam Beach' },
-        { id: 'wayanad', name: 'Wayanad Ecotourism' }
-    ];
+    // Sort spots alphabetically for checklist readability
+    const sortedSpots = Object.values(destinationsData).sort((a, b) => a.name.localeCompare(b.name));
 
-    spots.forEach(spot => {
+    sortedSpots.forEach(spot => {
         const item = document.createElement('label');
         item.className = 'checklist-item';
         item.innerHTML = `
@@ -788,29 +903,17 @@ function handleGenerateItinerary() {
             weatherSafety: "Weather: 16°C - 22°C. Misty and cool. Low landslide threat level today.",
             ecoVoucher: "PARAGON Eco-Voucher: Present this timeline for a 15% discount at Munnar Tea Museum!"
         },
-        alappuzha: {
-            optimalTime: "03:30 PM - 06:30 PM (for comfortable sunset boat cruise)",
-            routeGuide: "Route: Travel via NH66 from Kochi. 1h 30m drive. Flat urban highways.",
-            weatherSafety: "Weather: 28°C - 32°C. High humidity. Carry water and wear sun block.",
-            ecoVoucher: "PARAGON Eco-Voucher: Enjoy a complimentary lunch boat voucher at Vembanad Lake Cafe!"
-        },
-        athirappilly: {
-            optimalTime: "08:00 AM - 11:00 AM (for pristine mist photography and low crowds)",
-            routeGuide: "Route: Chalakudy-Anamala Road. 1h 15m drive. Forest canopy road.",
-            weatherSafety: "Weather: 26°C - 30°C. Mist spray. Avoid walking on slippery wet rocks near falls.",
-            ecoVoucher: "PARAGON Eco-Voucher: Claim a free eco-packaged drinking water bottle at forest entry!"
-        },
-        kovalam: {
-            optimalTime: "04:00 PM - 07:00 PM (for relaxing sea breeze)",
-            routeGuide: "Route: Take Bypass highway from Trivandrum city. 25 mins drive.",
-            weatherSafety: "Weather: 29°C - 33°C. Tropical. Avoid swimming deep due to strong beach rip tides.",
-            ecoVoucher: "PARAGON Eco-Voucher: Get 10% off organic items at Kovalam Weavers Cooperative!"
-        },
         wayanad: {
             optimalTime: "09:00 AM - 12:00 PM (safest forest viewing window)",
             routeGuide: "Route: Take Ghat highway through Lakkidi Pass. Watch for narrow steep curves.",
             weatherSafety: "Weather: 20°C - 24°C. Forest shade. Mosquito warning; carry organic repellents.",
             ecoVoucher: "PARAGON Eco-Voucher: Get 10% off entry tickets at Edakkal Caves!"
+        },
+        thekkady: {
+            optimalTime: "06:00 AM - 09:00 AM (best for Periyar lake boat safari bird sightings)",
+            routeGuide: "Route: KK Road (NH183) via Kanjirappally. Scenic winding valley path.",
+            weatherSafety: "Weather: 19°C - 24°C. Deep forests. Watch out for sudden tropical showers.",
+            ecoVoucher: "PARAGON Eco-Voucher: Get a free eco-bag with local spice packages at forest outlet!"
         },
         vagamon: {
             optimalTime: "02:00 PM - 05:00 PM (perfect stroll weather)",
@@ -818,17 +921,41 @@ function handleGenerateItinerary() {
             weatherSafety: "Weather: 19°C - 23°C. Breezy & cool fog patches. Excellent hiking roads.",
             ecoVoucher: "PARAGON Eco-Voucher: Get 15% off pine forest and meadows entry tickets!"
         },
-        varkala: {
-            optimalTime: "04:30 PM - 06:30 PM (spectacular sunset cliff walk)",
-            routeGuide: "Route: NH66 towards Kallambalam. 1h 15m drive from Trivandrum. Narrow local roads.",
-            weatherSafety: "Weather: 28°C - 31°C. Warm sea breeze. Cliff edge has loose gravel; stay on path.",
-            ecoVoucher: "PARAGON Eco-Voucher: Free organic herbal tea voucher at Cliff Organic Cafe!"
-        },
         ponmudi: {
             optimalTime: "06:00 AM - 09:00 AM (valley sunrise view)",
             routeGuide: "Route: Nedumangad-Ponmudi road. 22 Hairpins. Keep headlights on in fog.",
             weatherSafety: "Weather: 17°C - 21°C. Cold fog. Drive carefully on narrow bends.",
             ecoVoucher: "PARAGON Eco-Voucher: Get 20% off tea at Ponmudi Hilltops Cafe!"
+        },
+        idukki: {
+            optimalTime: "09:30 AM - 01:00 PM (pleasant sunlight for dam walk)",
+            routeGuide: "Route: Thodupuzha-Puliyanmala Road. 2h drive. Mountain road.",
+            weatherSafety: "Weather: 20°C - 25°C. Clean mountain air. Strict checkpost registration required.",
+            ecoVoucher: "PARAGON Eco-Voucher: Get 10% off entry passes at Idukki Hill View Park!"
+        },
+        nelliampathy: {
+            optimalTime: "08:00 AM - 11:30 AM (orange orchard viewing hours)",
+            routeGuide: "Route: Nenmara-Nelliampathy Road. 10 hairpins. Winding valley paths.",
+            weatherSafety: "Weather: 18°C - 23°C. Cool hillside breeze. Keep vehicle speeds low.",
+            ecoVoucher: "PARAGON Eco-Voucher: Claim a free local orange juice voucher at Nelliampathy Farms!"
+        },
+        silent_valley: {
+            optimalTime: "08:00 AM - 01:00 PM (controlled safari slots)",
+            routeGuide: "Route: Mannarkkad-Anakkatti Road. Restricted forest access checkpoints.",
+            weatherSafety: "Weather: 21°C - 26°C. Heavy forest canopy. Deep silence zones; do not litter or make noise.",
+            ecoVoucher: "PARAGON Eco-Voucher: 15% discount on forest department eco-guides!"
+        },
+        malampuzha: {
+            optimalTime: "03:30 PM - 07:00 PM (best evening lighting for dam gardens)",
+            routeGuide: "Route: Palakkad bypass roads. Easily accessible via city transit.",
+            weatherSafety: "Weather: 27°C - 31°C. Garden conditions. Watch kids near the reservoir banks.",
+            ecoVoucher: "PARAGON Eco-Voucher: Get 10% off Malampuzha ropeway tickets!"
+        },
+        alappuzha: {
+            optimalTime: "03:30 PM - 06:30 PM (for comfortable sunset boat cruise)",
+            routeGuide: "Route: Travel via NH66 from Kochi. 1h 30m drive. Flat urban highways.",
+            weatherSafety: "Weather: 28°C - 32°C. High humidity. Carry water and wear sun block.",
+            ecoVoucher: "PARAGON Eco-Voucher: Enjoy a complimentary lunch boat voucher at Vembanad Lake Cafe!"
         },
         kumarakom: {
             optimalTime: "02:00 PM - 05:00 PM (safe bird sanctuary hours)",
@@ -836,23 +963,119 @@ function handleGenerateItinerary() {
             weatherSafety: "Weather: 27°C - 31°C. Moderate swamp humidity. Wear walking shoes.",
             ecoVoucher: "PARAGON Eco-Voucher: Get 15% off at Kumarakom Bird Sanctuary entry!"
         },
+        kollam: {
+            optimalTime: "09:00 AM - 12:00 PM (morning Ashtamudi lake canal cruises)",
+            routeGuide: "Route: NH66 through city center. Heavy local traffic.",
+            weatherSafety: "Weather: 28°C - 32°C. Maritime conditions. Always wear safety lifejackets on water.",
+            ecoVoucher: "PARAGON Eco-Voucher: Receive a free local cashew snack pack on houseboat boarding!"
+        },
+        munroe_island: {
+            optimalTime: "03:00 PM - 06:00 PM (narrow canal canoe cruises)",
+            routeGuide: "Route: Kollam-Munroe Island local roads. Easy train access available.",
+            weatherSafety: "Weather: 26°C - 30°C. Swampy environment. Bring insect repellants.",
+            ecoVoucher: "PARAGON Eco-Voucher: 15% discount on canoe boating with local fishers!"
+        },
+        kavvayi: {
+            optimalTime: "03:00 PM - 06:30 PM (peaceful northern sunset channels)",
+            routeGuide: "Route: Payyanur city roads. 15 mins drive from railway station.",
+            weatherSafety: "Weather: 27°C - 31°C. Calm backwaters. Ideal for uncrowded kayaking.",
+            ecoVoucher: "PARAGON Eco-Voucher: Get a free coconut water drink at Kavvayi village boat stand!"
+        },
+        ashtamudi: {
+            optimalTime: "04:00 PM - 07:00 PM (scenic lakeside views)",
+            routeGuide: "Route: Kollam bypass roads. Scenic views over palm shores.",
+            weatherSafety: "Weather: 27°C - 30°C. Cool lakeside breeze. Wear hats and sunscreen.",
+            ecoVoucher: "PARAGON Eco-Voucher: Get 10% off at Ashtamudi Coir Artisan Guild shops!"
+        },
+        kovalam: {
+            optimalTime: "04:00 PM - 07:00 PM (for relaxing sea breeze)",
+            routeGuide: "Route: Take Bypass highway from Trivandrum city. 25 mins drive.",
+            weatherSafety: "Weather: 29°C - 33°C. Tropical. Avoid swimming deep due to strong beach rip tides.",
+            ecoVoucher: "PARAGON Eco-Voucher: Get 10% off organic items at Kovalam Weavers Cooperative!"
+        },
+        varkala: {
+            optimalTime: "04:30 PM - 06:30 PM (spectacular sunset cliff walk)",
+            routeGuide: "Route: NH66 towards Kallambalam. 1h 15m drive from Trivandrum. Narrow local roads.",
+            weatherSafety: "Weather: 28°C - 31°C. Warm sea breeze. Cliff edge has loose gravel; stay on path.",
+            ecoVoucher: "PARAGON Eco-Voucher: Free organic herbal tea voucher at Cliff Organic Cafe!"
+        },
         fort_kochi: {
             optimalTime: "04:00 PM - 07:30 PM (Chinese fishing net walks)",
             routeGuide: "Route: easy street walks. Ferries run from Ernakulam jetty every 20 mins.",
             weatherSafety: "Weather: 29°C - 32°C. Sea breeze. Paved pedestrian paths.",
             ecoVoucher: "PARAGON Eco-Voucher: Get 10% off at Fort Kochi Heritage Craft Cooperative!"
         },
-        vazhachal: {
-            optimalTime: "09:00 AM - 12:00 PM (forest bird watching)",
-            routeGuide: "Route: Chalakudy-Anamala Road. 5km ahead of Athirappilly. Forest drive.",
-            weatherSafety: "Weather: 25°C - 29°C. Deep shade. Safe walkways.",
-            ecoVoucher: "PARAGON Eco-Voucher: Get 10% off honey at Vazhachal tribal cooperative!"
+        marari: {
+            optimalTime: "06:00 AM - 09:00 AM (peaceful morning coastal walks)",
+            routeGuide: "Route: Mararikulam village roads off NH66. Flat lanes.",
+            weatherSafety: "Weather: 27°C - 30°C. Clear sandy beach. Sun protective gear recommended.",
+            ecoVoucher: "PARAGON Eco-Voucher: Free local shell art souvenir at Marari handicraft hut!"
         },
-        malakkappara: {
-            optimalTime: "08:00 AM - 01:00 PM (deep forest sanctuary experience)",
-            routeGuide: "Route: Chalakudy-Valparai route. Checkpost permit needed. Watch for elephants.",
-            weatherSafety: "Weather: 18°C - 23°C. Clean mountain air. Strict zero-plastic zone.",
-            ecoVoucher: "PARAGON Eco-Voucher: Free local spices package from tribal cooperative!"
+        poovar: {
+            optimalTime: "02:30 PM - 05:30 PM (mangrove forest boat rides)",
+            routeGuide: "Route: TVM-Kovalam-Poovar road. 45 mins drive from capital.",
+            weatherSafety: "Weather: 28°C - 32°C. High tide warnings in afternoon. Keep hands inside boats.",
+            ecoVoucher: "PARAGON Eco-Voucher: Get a free fresh fruit bowl at Poovar floating park!"
+        },
+        bekal: {
+            optimalTime: "03:30 PM - 06:30 PM (best fort lighting for photography)",
+            routeGuide: "Route: Kanhangad-Kasargod highway. 25 mins drive from Kasargod.",
+            weatherSafety: "Weather: 28°C - 31°C. Fort pathways can get warm. Keep hydrated.",
+            ecoVoucher: "PARAGON Eco-Voucher: Get 10% off entry tickets at Bekal Historical Fort!"
+        },
+        kannur: {
+            optimalTime: "04:00 PM - 07:30 PM (Theyyam museum & drive-in beaches)",
+            routeGuide: "Route: NH66 bypass road. Easily navigable coastal streets.",
+            weatherSafety: "Weather: 28°C - 32°C. High humidity. Safe sandy beaches.",
+            ecoVoucher: "PARAGON Eco-Voucher: Get a free handloom bag at Kannur Weaver cooperative!"
+        },
+        kozhikode: {
+            optimalTime: "04:30 PM - 08:00 PM (famous Kozhikode beach foods walk)",
+            routeGuide: "Route: Calicut beach bypass. Dense city traffic in evenings.",
+            weatherSafety: "Weather: 28°C - 31°C. Seaside breeze. Crowded parking zones; use public transit.",
+            ecoVoucher: "PARAGON Eco-Voucher: Get a free Kozhikodan Halwa sample slice at sweet street!"
+        },
+        kizhunna: {
+            optimalTime: "03:00 PM - 06:00 PM (quiet beach picnic)",
+            routeGuide: "Route: local coastal paths off Kannur city. Winding sandy lanes.",
+            weatherSafety: "Weather: 27°C - 31°C. Secluded. Low crowd, highly safe swimming.",
+            ecoVoucher: "PARAGON Eco-Voucher: Receive a free coconut oil bottle sample at village co-op!"
+        },
+        shanghumugham: {
+            optimalTime: "05:00 PM - 07:00 PM (sea giant sculpture & sunset)",
+            routeGuide: "Route: Airport Road from Thiruvananthapuram. Multi-lane highway.",
+            weatherSafety: "Weather: 27°C - 30°C. Beach erosion risk in monsoon. Stay away from waves.",
+            ecoVoucher: "PARAGON Eco-Voucher: 10% off at Coffee House Shanghumugham beach branch!"
+        },
+        trivandrum: {
+            optimalTime: "09:00 AM - 12:30 PM (museums and palace tours)",
+            routeGuide: "Route: TVM main roads. Excellent city transit infrastructure.",
+            weatherSafety: "Weather: 28°C - 32°C. Pleasant city walks. Comfortable footwear recommended.",
+            ecoVoucher: "PARAGON Eco-Voucher: 15% discount on Napier Museum tickets!"
+        },
+        thrissur: {
+            optimalTime: "09:30 AM - 01:00 PM (Vadakkumnathan temple walk)",
+            routeGuide: "Route: Swaraj Round. Expect high round-about traffic congestion.",
+            weatherSafety: "Weather: 27°C - 32°C. Hot city center. Sun umbrella is useful.",
+            ecoVoucher: "PARAGON Eco-Voucher: Get a free traditional brass oil lamp souvenir at town bazaar!"
+        },
+        guruvayur: {
+            optimalTime: "05:00 AM - 08:00 AM (morning spiritual queues)",
+            routeGuide: "Route: Thrissur-Guruvayur highway. 45 mins drive. Heavy tourist coaches.",
+            weatherSafety: "Weather: 26°C - 30°C. Extremely crowded temple queue complexes. Keep safe distances.",
+            ecoVoucher: "PARAGON Eco-Voucher: Free traditional prasad packet at temple trust counters!"
+        },
+        padmanabhapuram: {
+            optimalTime: "09:00 AM - 01:00 PM (wooden palace architecture walk)",
+            routeGuide: "Route: Kanyakumari highway (NH66). 1.5h drive from TVM.",
+            weatherSafety: "Weather: 29°C - 33°C. Warm. Wooden palace requires walking barefoot inside.",
+            ecoVoucher: "PARAGON Eco-Voucher: 10% discount on wooden handicraft purchases!"
+        },
+        jatayu: {
+            optimalTime: "09:00 AM - 01:00 PM (best cable car views & sculpture walks)",
+            routeGuide: "Route: MC Road (NH183) near Chadayamangalam. 1h drive from Trivandrum.",
+            weatherSafety: "Weather: 25°C - 30°C. Hilltop sun. Cable cars are air-conditioned; wear hats.",
+            ecoVoucher: "PARAGON Eco-Voucher: Get 10% off Jatayu cable car family passes!"
         }
     };
 
@@ -919,7 +1142,7 @@ function handleGenerateItinerary() {
                     </div>
                 `;
                 
-                logFeed('Itinerary Redirection', `Rerouted ${unit === 'hours' ? 'Hour ' + (stepIdx+1) : 'Day ' + (stepIdx+1)} from congested ${dest.name} to ${bestAlt.name}`, 'warn');
+                logFeed('Itinerary Redirection', `Rerouted ${unit === 'hours' ? 'Hour ' + (stepIdx+1) : 'Day ' + (stepIdx+1)} from crowded ${dest.name} to ${bestAlt.name}`, 'warn');
             } else {
                 altReason = `<div class="step-redirect-alert" style="margin-bottom: 8px;"><strong>Alert:</strong> Area is overloaded at this time. Proceed with caution.</div>`;
             }
