@@ -691,20 +691,23 @@ function logFeed(title, text, type = 'info') {
     const now = new Date();
     const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     
-    const feedItem = document.createElement('div');
-    feedItem.className = `feed-item ${type === 'warn' ? 'feed-warn' : 'feed-info'}`;
-    feedItem.innerHTML = `
-        <span class="feed-time">${timeStr}</span>
-        <div class="feed-text">
-            <strong>${title}:</strong> ${text}
-        </div>
-    `;
+    console.log(`[${type.toUpperCase()}] ${title}: ${text}`);
 
-    feedLog.prepend(feedItem); // Put newest items on top
-    
-    // Prevent memory leaks / UI bloat by maintaining max 20 entries
-    while (feedLog.children.length > 20) {
-        feedLog.removeChild(feedLog.lastChild);
+    if (feedLog) {
+        const feedItem = document.createElement('div');
+        feedItem.className = `feed-item ${type === 'warn' ? 'feed-warn' : 'feed-info'}`;
+        feedItem.innerHTML = `
+            <span class="feed-time">${timeStr}</span>
+            <div class="feed-text">
+                <strong>${title}:</strong> ${text}
+            </div>
+        `;
+
+        feedLog.prepend(feedItem); // Put newest items on top
+        
+        while (feedLog.children.length > 20) {
+            feedLog.removeChild(feedLog.lastChild);
+        }
     }
 }
 
