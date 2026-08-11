@@ -1,43 +1,152 @@
-# System Testing & Verification Report
+# Smart Kerala Tourism - QA & Verification Guide
 
-This document records the testing plan, cases, and automated validation results for the Sustainable Tourism Platform.
+This document provides complete instructions for running automated unit and integration tests, along with manual verification workflows for hackathon judges and evaluators.
 
 ---
 
-## 1. Automated Unit & Integration Tests
+## 1. Automated Unit & Integration Tests Overview
 
-The test suite is built using `pytest` and `fastapi.testclient`. It verifies database operations, API response contracts, optimization math, and simulated state changes.
+The backend verification suite is located in `tests/test_backend.py`. It uses `pytest` and FastAPI `TestClient` to validate API contracts, crowd redirection algorithms, dynamic status calculation, load simulation, and database persistence.
 
-### File: [`test_backend.py`](file:///C:/Users/Asus/.gemini/antigravity/scratch/sih_kerala_tourism/tests/test_backend.py)
+### Test Coverage Checklist
 
-### Running the Tests:
-To run the automated tests, execute:
+| Test Function | Target Endpoint(s) | Description & Key Assertions |
+| :--- | :--- | :--- |
+| `test_get_destinations_lists_all_seeded_points` | `GET /api/destinations` | Verifies all 8+ seeded Kerala tourist destinations are listed with schema attributes (`id`, `carrying_capacity`, `current_load`, `status`, `location`). |
+| `test_get_destination_by_id_returns_12h_forecast` | `GET /api/destinations/{id}` | Verifies single destination detail retrieval, 12-hour hourly crowd forecast generation (12 objects, risk levels, weather), and HTTP 404 handling. |
+| `test_post_recommend_triggers_redirection_alternatives` | `POST /api/recommend` | Verifies capacity evaluation logic: when `group_size + current_load > carrying_capacity`, `redirect_triggered` becomes `True` and lists lower-density alternative destinations. Also verifies normal flow when within capacity. |
+| `test_post_simulate_crowd_alters_destination_load_state` | `POST /api/simulate/crowd` | Verifies in-memory crowd state mutation (setting exact load, adding/reducing headcount), status recalculation ("normal" vs "overcapacity"), and state persistence. |
+| `test_save_and_get_itinerary` | `POST /api/itineraries`<br>`GET /api/itineraries` | **[Database Persistence Verified]**: Verifies saving a traveler itinerary via POST API and retrieving saved itineraries via GET API, ensuring persistent storage integrity. |
+
+---
+
+## 2. Prerequisites & Environment Setup
+
+Ensure Python 3.10+ is installed on your system.
+
+### Install Dependencies
+
+From the project root directory (`sih_kerala_tourism` / `sih_2026`), run:
+
+```bash
+pip install pytest fastapi httpx uvicorn
+```
+
+---
+
+## 3. Running Automated Tests
+
+Run the full pytest suite from project root:
+
 ```bash
 pytest tests/
 ```
 
-### Test Coverage Results:
-- `test_get_destinations`: Verifies listing API filters and fields. (PASSED)
-- `test_get_destination_detail`: Verifies details retrieval and 12-hour crowd forecasting generation. (PASSED)
-- `test_recommendation_congested`: Simulates routing requests for overcrowded spots (Munnar at 115% load), verifying that a redirection sequence triggers and ranks nearby alternatives (Marayoor) with appropriate incentives. (PASSED)
-- `test_recommendation_not_congested`: Verifies that a normal spot request does not trigger redundant redirection recommendations. (PASSED)
-- `test_simulation_crowd`: Simulates POST updates changing crowd bounds, verifying that the recommendation engine adapts state instantly. (PASSED)
+Or for verbose execution:
+
+```bash
+pytest -v tests/test_backend.py
+```
+
+### Expected Output
+
+```text
+============================= test session starts =============================
+platform win32 -- Python 3.13.x, pytest-9.x.x
+rootdir: C:\Users\...\sih_2026
+collected 5 items
+
+tests/test_backend.py::test_get_destinations_lists_all_seeded_points PASSED [ 20%]
+tests/test_backend.py::test_get_destination_by_id_returns_12h_forecast PASSED [ 40%]
+tests/test_backend.py::test_post_recommend_triggers_redirection_alternatives PASSED [ 60%]
+tests/test_backend.py::test_post_simulate_crowd_alters_destination_load_state PASSED [ 80%]
+tests/test_backend.py::test_save_and_get_itinerary PASSED                   [100%]
+
+============================== 5 passed in 0.12s ==============================
+```
 
 ---
 
-## 2. Manual Verification Guidelines
+## 4. Manual Verification Steps for Judges
 
-To verify the user experience, follow these manual steps:
+For live evaluation and interactive testing:
 
-1. **Start the backend server:**
-   ```bash
-   uvicorn backend.main:app --reload
-   ```
-2. **Access the Web Dashboard:** Open `http://127.0.0.1:8000` in your web browser.
-3. **Verify Map Render:** Ensure the Leaflet map is rendered in dark mode with colored pins indicating Munnar (Red, crowded) and Marayoor (Green, empty).
-4. **Choose Destination:**
-   - In the dropdown, choose **Munnar Tea Gardens**. Click **Calculate Routing & Load**.
-   - **Verification**: The redirection panel must display a prominent warning banner explaining Munnar is congested. It must show **Marayoor Sandalwood Forests** as the top alternative (95% match) with a 20% craft discount incentive. A dotted line will appear on the map connecting the two points.
-5. **Simulate Relief:**
-   - Under the **SIH Live Simulation Panel**, click the button: **Clear Munnar**.
-   - **Verification**: Munnar's marker turns green instantly. In the dropdown, Munnar's indicator changes to "(Normal)". Selecting Munnar and clicking "Calculate" no longer triggers a redirection popup, proving dynamic balancing works in real-time.
+### Step 1: Start the Backend Server
+
+Launch the FastAPI application locally:
+
+```bash
+python -m uvicorn app.main:app --reload --port 8000
+```
+
+### Step 2: Open Swagger Interactive Documentation
+
+Navigate to `http://localhost:8000/docs` in your browser. All API endpoints can be executed directly from this UI.
+
+---
+
+### Step 3: Manual Verification Scenarios
+
+#### Scenario A: List All Tourist Destinations
+- **Endpoint**: `GET /api/destinations`
+- **cURL Command**:
+  ```bash
+  curl -X GET "http://localhost:8000/api/destinations"
+  ```
+- **Expected Result**: HTTP 200 containing JSON array of Kerala tourist spots.
+
+#### Scenario B: Check 12-Hour Crowd Forecast for Munnar
+- **Endpoint**: `GET /api/destinations/munnar-tea-gardens`
+- **cURL Command**:
+  ```bash
+  curl -X GET "http://localhost:8000/api/destinations/munnar-tea-gardens"
+  ```
+- **Expected Result**: HTTP 200 response with destination parameters and a 12-element `forecast_12h` array.
+
+#### Scenario C: Test Smart Redirection Engine (Overcapacity Trigger)
+- **Endpoint**: `POST /api/recommend`
+- **Request Body**:
+  ```json
+  {
+    "destination_id": "munnar-tea-gardens",
+    "group_size": 50
+  }
+  ```
+- **cURL Command**:
+  ```bash
+  curl -X POST "http://localhost:8000/api/recommend" \
+       -H "Content-Type: application/json" \
+       -d "{\"destination_id\": \"munnar-tea-gardens\", \"group_size\": 50}"
+  ```
+- **Expected Result**: `redirect_triggered` will be `true`, returning alternative low-density spots.
+
+#### Scenario D: Live Crowd Simulation & State Mutation
+- **Endpoint**: `POST /api/simulate/crowd`
+- **Request Body**:
+  ```json
+  {
+    "destination_id": "fort-kochi-heritage",
+    "current_load": 1500
+  }
+  ```
+- **cURL Command**:
+  ```bash
+  curl -X POST "http://localhost:8000/api/simulate/crowd" \
+       -H "Content-Type: application/json" \
+       -d "{\"destination_id\": \"fort-kochi-heritage\", \"current_load\": 1500}"
+  ```
+- **Expected Result**: Fort Kochi state updates to `overcapacity` (load 1500 vs capacity 1000).
+
+#### Scenario E: Saved Itinerary Database Persistence
+- **Endpoints**: `POST /api/itineraries` and `GET /api/itineraries`
+- **Create Itinerary cURL Command**:
+  ```bash
+  curl -X POST "http://localhost:8000/api/itineraries" \
+       -H "Content-Type: application/json" \
+       -d "{\"traveler_name\": \"Juwel\", \"travel_date\": \"2026-12-25\", \"destinations_list\": \"Munnar Tea Gardens, Marayoor Sandalwood Forests\"}"
+  ```
+- **Retrieve Itineraries cURL Command**:
+  ```bash
+  curl -X GET "http://localhost:8000/api/itineraries"
+  ```
+- **Expected Result**: Saved itinerary object returned with auto-generated ID, verifiable via GET request.
