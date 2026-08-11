@@ -580,12 +580,12 @@ select:focus {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--color-accent), #0284c7);
+    background: linear-gradient(135deg, var(--color-accent), #c2410c);
     color: #ffffff;
 }
 
 .btn-primary:hover:not(:disabled) {
-    background: linear-gradient(135deg, #0ea5e9, #0369a1);
+    background: linear-gradient(135deg, #f97316, #ea580c);
     transform: scale(1.02);
 }
 
@@ -606,7 +606,7 @@ select:focus {
 }
 
 .btn-outline.active {
-    background: rgba(2, 132, 199, 0.08);
+    background: rgba(234, 88, 12, 0.08);
     border-color: var(--color-accent);
     color: var(--color-accent);
     box-shadow: 0 0 10px var(--color-accent-glow);
@@ -1017,12 +1017,12 @@ select:focus {
 }
 
 .checklist-item input {
-    accent-color: var(--color-primary);
+    accent-color: var(--color-accent);
     cursor: pointer;
 }
 
 .checklist-item:hover {
-    color: var(--text-main);
+    color: var(--text-primary);
 }
 
 .itinerary-timeline {
@@ -1098,7 +1098,7 @@ select:focus {
     font-size: 0.65rem;
     font-weight: 700;
     text-transform: uppercase;
-    color: var(--color-secondary);
+    color: var(--text-secondary);
     margin-bottom: 0.2rem;
     display: inline-block;
 }
@@ -1107,33 +1107,33 @@ select:focus {
     font-weight: 600;
     font-size: 0.85rem;
     display: block;
-    color: var(--text-main);
+    color: var(--text-primary);
 }
 
 .step-details {
     font-size: 0.75rem;
-    color: var(--text-muted);
+    color: var(--text-secondary); /* Darker secondary text for maximum contrast */
     margin-top: 0.2rem;
 }
 
 .step-redirect-alert {
     margin-top: 0.4rem;
-    background: rgba(239, 68, 68, 0.08);
-    border: 1px solid rgba(239, 68, 68, 0.2);
+    background: rgba(239, 68, 68, 0.05);
+    border: 1px solid rgba(239, 68, 68, 0.25);
     border-radius: 6px;
     padding: 0.4rem;
     font-size: 0.75rem;
-    color: #fca5a5;
+    color: #991b1b; /* Deep red for readability on light glass */
     line-height: 1.3;
 }
 
 .step-redirect-alert strong {
-    color: var(--color-red);
+    color: var(--color-overloaded);
 }
 
 .step-incentive {
     font-size: 0.7rem;
-    color: var(--color-primary);
+    color: var(--color-accent);
     margin-top: 0.3rem;
     font-weight: 500;
 }
