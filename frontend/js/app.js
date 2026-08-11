@@ -236,6 +236,11 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Setup Itinerary Planner UI
+    populatePlannerChecklist();
+    document.getElementById('generate-itinerary-btn').addEventListener('click', handleGenerateItinerary);
+    document.getElementById('save-itinerary-btn').addEventListener('click', handleSaveItinerary);
+
     logFeed('System Initialization', 'PARAGON Sustainability monitoring online.', 'info');
 });
 
@@ -706,4 +711,180 @@ function initClock() {
     };
     updateTime();
     setInterval(updateTime, 1000);
+}
+
+// ==========================================
+// 10. ITINERARY PLANNER & PERSISTENCE ENGINE
+// ==========================================
+
+let generatedItinerarySteps = [];
+
+// Populate checklist of tourist spots
+function populatePlannerChecklist() {
+    const container = document.getElementById('planner-checklist');
+    container.innerHTML = '';
+    
+    const spots = [
+        { id: 'munnar', name: 'Munnar Hill Station' },
+        { id: 'alappuzha', name: 'Alappuzha Backwaters' },
+        { id: 'athirappilly', name: 'Athirappilly Waterfalls' },
+        { id: 'kovalam', name: 'Kovalam Beach' },
+        { id: 'wayanad', name: 'Wayanad Ecotourism' }
+    ];
+
+    spots.forEach(spot => {
+        const item = document.createElement('label');
+        item.className = 'checklist-item';
+        item.innerHTML = `
+            <input type="checkbox" name="planner-spots" value="${spot.id}" checked>
+            <span>${spot.name}</span>
+        `;
+        container.appendChild(item);
+    });
+
+    // Default start date to today
+    document.getElementById('travel-date').valueAsDate = new Date();
+}
+
+// Calculate and generate the timeline
+function handleGenerateItinerary() {
+    const name = document.getElementById('traveler-name').value.trim();
+    const startDateStr = document.getElementById('travel-date').value;
+    const days = parseInt(document.getElementById('travel-days').value);
+    
+    if (!name) {
+        alert("Please enter your name to personalize the itinerary.");
+        return;
+    }
+    if (!startDateStr) {
+        alert("Please select a start date.");
+        return;
+    }
+
+    // Get checked checklist locations
+    const checkedCheckboxes = document.querySelectorAll('input[name="planner-spots"]:checked');
+    const selectedIds = Array.from(checkedCheckboxes).map(cb => cb.value);
+
+    if (selectedIds.length === 0) {
+        alert("Please select at least one place of interest.");
+        return;
+    }
+
+    const timelineContainer = document.getElementById('itinerary-timeline');
+    const stepsContainer = document.getElementById('timeline-steps');
+    stepsContainer.innerHTML = '';
+    generatedItinerarySteps = [];
+
+    const startDate = new Date(startDateStr);
+
+    // Schedule: allocate one destination per day up to "days"
+    for (let dayIdx = 0; dayIdx < days; dayIdx++) {
+        // Pick destination in round-robin fashion from selected
+        const baseId = selectedIds[dayIdx % selectedIds.length];
+        const dest = destinationsData[baseId];
+        if (!dest) continue;
+
+        const ratio = dest.tourists / dest.capacity;
+        const isCongested = ratio >= 0.8;
+
+        const currentStepDate = new Date(startDate);
+        currentStepDate.setDate(startDate.getDate() + dayIdx);
+        const dateString = currentStepDate.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
+
+        let stepHtml = '';
+        let stepClass = 'safe-step';
+        let stepName = dest.name;
+        let altReason = '';
+        let finalDestId = baseId;
+        
+        if (isCongested) {
+            stepClass = 'congested-step';
+            // Trigger redirection
+            const alternatives = calculateLocalRecommendations(baseId);
+            if (alternatives.length > 0) {
+                const bestAlt = alternatives[0]; // Ranks safest first
+                finalDestId = bestAlt.id;
+                stepName = `${dest.name} ➔ ${bestAlt.name}`;
+                
+                altReason = `
+                    <div class="step-redirect-alert">
+                        <strong>Redirection Active:</strong> ${dest.name} has exceeded capacity limits (${Math.round(ratio*100)}% load). 
+                        Rerouted to <strong>${bestAlt.name}</strong> (${bestAlt.distance} away, ${Math.round(bestAlt.ratio*100)}% load).
+                        <div class="step-incentive"><i class="fa-solid fa-gift"></i> Incentive: Get 15% off local park tickets!</div>
+                    </div>
+                `;
+                
+                logFeed('Itinerary Redirection', `Rerouted Day ${dayIdx+1} from crowded ${dest.name} to ${bestAlt.name}`, 'warn');
+            } else {
+                altReason = `<div class="step-redirect-alert"><strong>Alert:</strong> Destination is crowded, please proceed with caution.</div>`;
+            }
+        } else {
+            logFeed('Itinerary Scheduled', `Scheduled Day ${dayIdx+1} to ${dest.name} (Optimal)`, 'info');
+        }
+
+        generatedItinerarySteps.push({
+            day: dayIdx + 1,
+            date: dateString,
+            destination_id: finalDestId,
+            destination_name: stepName,
+            status: isCongested ? "Redirected" : "Safe"
+        });
+
+        const stepCard = document.createElement('div');
+        stepCard.className = `timeline-step ${stepClass}`;
+        stepCard.style.cursor = 'pointer';
+        stepCard.innerHTML = `
+            <span class="step-day-badge">Day ${dayIdx + 1} - ${dateString}</span>
+            <span class="step-name">${stepName}</span>
+            <div class="step-details">Estimated visit: 4 hours | Capacity Status: ${isCongested ? "Overcapacity (Rerouted)" : "Safe flow"}</div>
+            ${altReason}
+        `;
+
+        // Click a step to center and focus the map on the guide location!
+        stepCard.addEventListener('click', () => {
+            if (window.selectDestination) {
+                window.selectDestination(finalDestId);
+            }
+        });
+
+        stepsContainer.appendChild(stepCard);
+    }
+
+    timelineContainer.classList.remove('hidden');
+}
+
+// Save the itinerary in the database via POST /api/itineraries
+function handleSaveItinerary() {
+    const name = document.getElementById('traveler-name').value.trim();
+    const startDateStr = document.getElementById('travel-date').value;
+    
+    if (generatedItinerarySteps.length === 0) return;
+
+    // Create string list of destinations
+    const listStr = generatedItinerarySteps.map(s => `Day ${s.day}: ${s.destination_name}`).join(" | ");
+
+    const payload = {
+        traveler_name: name,
+        travel_date: startDateStr,
+        destinations_list: listStr
+    };
+
+    fetch('/api/itineraries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    })
+    .then(response => {
+        if (!response.ok) throw new Error('Database server offline.');
+        return response.json();
+    })
+    .then(data => {
+        logFeed('Route Registered', `Itinerary successfully saved to SQLite DB (ID: ${data.id})`, 'info');
+        alert(`Success! Your custom crowd-safe itinerary has been saved to the database.\nItinerary ID: ${data.id}`);
+    })
+    .catch(err => {
+        console.error("Save failed:", err);
+        logFeed('Save Error', 'Failed to persist itinerary. Backend SQLite offline.', 'warn');
+        alert("Failed to save to database. Please make sure the FastAPI server is running.");
+    });
 }

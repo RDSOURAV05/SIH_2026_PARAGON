@@ -921,3 +921,175 @@ select:focus {
         height: 250px;
     }
 }
+
+/* ==========================================
+   INTELLIGENT ITINERARY PLANNER STYLES
+   ========================================= */
+
+.planner-card {
+    margin-top: 0.5rem;
+}
+
+.planner-input {
+    width: 100%;
+    background: rgba(15, 22, 38, 0.7);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 0.7rem;
+    color: var(--text-main);
+    font-family: inherit;
+    font-size: 0.85rem;
+    outline: none;
+    transition: var(--transition-smooth);
+}
+
+.planner-input:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 8px var(--color-primary-glow);
+}
+
+.planner-checklist {
+    max-height: 120px;
+    overflow-y: auto;
+    background: rgba(15, 22, 38, 0.6);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.checklist-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+    user-select: none;
+    color: var(--text-muted);
+    transition: var(--transition-smooth);
+}
+
+.checklist-item input {
+    accent-color: var(--color-primary);
+    cursor: pointer;
+}
+
+.checklist-item:hover {
+    color: var(--text-main);
+}
+
+.itinerary-timeline {
+    margin-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 1rem;
+    animation: slideIn 0.4s ease-out;
+}
+
+.itinerary-timeline h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+    color: var(--color-primary);
+}
+
+.timeline-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    position: relative;
+    padding-left: 1.2rem;
+}
+
+.timeline-steps::before {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 5px;
+    bottom: 5px;
+    width: 2px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.timeline-step {
+    position: relative;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: 10px;
+    padding: 0.75rem;
+    transition: var(--transition-smooth);
+}
+
+.timeline-step:hover {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.timeline-step::before {
+    content: '';
+    position: absolute;
+    left: -19px;
+    top: 12px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--text-muted);
+    border: 2px solid var(--bg-main);
+    transition: var(--transition-smooth);
+}
+
+.timeline-step.congested-step::before {
+    background: var(--color-red);
+    box-shadow: 0 0 6px var(--color-red);
+}
+
+.timeline-step.safe-step::before {
+    background: var(--color-green);
+    box-shadow: 0 0 6px var(--color-green);
+}
+
+.step-day-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--color-secondary);
+    margin-bottom: 0.2rem;
+    display: inline-block;
+}
+
+.step-name {
+    font-weight: 600;
+    font-size: 0.85rem;
+    display: block;
+    color: var(--text-main);
+}
+
+.step-details {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.2rem;
+}
+
+.step-redirect-alert {
+    margin-top: 0.4rem;
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 6px;
+    padding: 0.4rem;
+    font-size: 0.75rem;
+    color: #fca5a5;
+    line-height: 1.3;
+}
+
+.step-redirect-alert strong {
+    color: var(--color-red);
+}
+
+.step-incentive {
+    font-size: 0.7rem;
+    color: var(--color-primary);
+    margin-top: 0.3rem;
+    font-weight: 500;
+}
+

@@ -150,6 +150,53 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Card 4: Intelligent Itinerary Planner -->
+                <div class="card glass planner-card">
+                    <div class="card-header">
+                        <i class="fa-solid fa-route card-icon"></i>
+                        <h2>Itinerary Planner & Guide</h2>
+                    </div>
+                    <div class="card-content">
+                        <p class="section-desc">Plan your trip based on available days. Get real-time crowd-safe routes.</p>
+                        
+                        <div class="form-group">
+                            <label for="traveler-name">Traveler Name</label>
+                            <input type="text" id="traveler-name" placeholder="E.g., Juwel" class="planner-input">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="travel-date">Start Date</label>
+                            <input type="date" id="travel-date" class="planner-input">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="travel-days">Trip Duration (Days)</label>
+                            <input type="number" id="travel-days" min="1" max="5" value="2" class="planner-input">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Select Places of Interest</label>
+                            <div class="planner-checklist" id="planner-checklist">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+
+                        <button id="generate-itinerary-btn" class="btn btn-primary btn-glow btn-full">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Generate Itinerary
+                        </button>
+
+                        <div id="itinerary-timeline" class="itinerary-timeline hidden">
+                            <h3>Your Custom Safe Timeline</h3>
+                            <div id="timeline-steps" class="timeline-steps">
+                                <!-- Steps populated here -->
+                            </div>
+                            <button id="save-itinerary-btn" class="btn btn-outline btn-full" style="margin-top: 15px;">
+                                <i class="fa-solid fa-floppy-disk"></i> Register Route in DB
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </section>
 
             <!-- Center Panel: Leaflet Map -->
