@@ -52,7 +52,8 @@
 
 body {
     font-family: var(--font-primary);
-    background-color: var(--bg-dark);
+    background: linear-gradient(135deg, #eefdf5 0%, #fff7ed 50%, #f0f9ff 100%) !important;
+    background-attachment: fixed;
     color: var(--text-primary);
     min-height: 100vh;
     overflow-x: hidden;
@@ -81,10 +82,37 @@ body {
 
 /* Card Styles */
 .glass {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: 12px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 2px 4px -2px rgba(0, 0, 0, 0.03);
+}
+
+.planner-card {
+    background: rgba(240, 253, 244, 0.85) !important;
+    border: 1px solid rgba(187, 247, 208, 0.6) !important;
+}
+
+.simulator-card {
+    background: rgba(255, 247, 237, 0.85) !important;
+    border: 1px solid rgba(254, 215, 170, 0.6) !important;
+}
+
+.chart-card {
+    background: rgba(240, 249, 255, 0.85) !important;
+    border: 1px solid rgba(186, 230, 253, 0.6) !important;
+}
+
+.advisory-card {
+    background: rgba(255, 247, 237, 0.85) !important;
+    border: 1px solid rgba(254, 215, 170, 0.6) !important;
+}
+
+.registry-card {
+    background: rgba(250, 250, 249, 0.85) !important;
+    border: 1px solid rgba(231, 229, 228, 0.6) !important;
 }
 
 /* Header Styling */
